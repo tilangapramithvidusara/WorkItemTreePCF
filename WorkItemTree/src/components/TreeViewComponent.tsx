@@ -284,7 +284,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: any}) => {
 
   return (
     <div className="custom-container" id="custom-container" ref={dropdownRef}>
-      <p>Tree Component</p>
+      <p className='tree-title'>Tree Component</p>
       {treeData && treeData.length > 0 ? (
         <div id="treeElement">
           <Spin spinning={isLoading}>

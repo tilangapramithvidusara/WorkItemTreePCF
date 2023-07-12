@@ -23,11 +23,9 @@
 }
 
 .custom-container .ant-tree-title {
-  color: #323130 !important;
-  font-family: "Segoe UI", SegoeUI, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  color: #616161 !important;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .custom-container
@@ -43,4 +41,15 @@
 
 .ant-tree-drop-indicator {
   display: none !important;
+}
+
+.tree-title {
+  text-align: left;
+  font-size: 20px;
+  color: #2E2E2E;
+  font-weight: 600;
+}
+
+.ant-tree-show-line .ant-tree-indent-unit:before {
+  display: none;
 }
