@@ -280,7 +280,7 @@ const  TreeViewComponent = () => {
       {treeData && treeData.length > 0 ? (
         <div>
           {currentLogicalName !== LogicalNames.WORKITEM && (
-            <div>
+            <div className="btn-location-wrap">
               <button onClick={() => expandCurrentLocationNodesByKey()}>Current Location Data</button>
             </div>
           )}
