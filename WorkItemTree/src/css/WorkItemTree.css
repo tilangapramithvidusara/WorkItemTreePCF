@@ -19,7 +19,12 @@
 }
 
 .custom-container .ant-tree .ant-tree-treenode {
-  padding: 5px 16px 14px 14px;
+  padding: 0 0 7px 0;
+}
+
+.custom-container .btn-location-wrap {
+  text-align: left;
+  margin-bottom: 10px;
 }
 
 .custom-container .ant-tree-title {
@@ -52,4 +57,12 @@
 
 .ant-tree-show-line .ant-tree-indent-unit:before {
   display: none;
+}
+
+.custom-container .ant-tree-switcher.ant-tree-switcher-noop {
+  display: none;
+}
+
+.custom-container .ant-tree-draggable-icon {
+  line-height: 28px;
 }

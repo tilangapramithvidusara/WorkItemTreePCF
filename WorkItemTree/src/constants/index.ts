@@ -7,6 +7,22 @@ export const LogicalNames = {
   INTERNAL: "gyde_internalid",
   WORKITEM: "gyde_workitemtemplate",
   OPERATION: "gyde_GetSurveyWorkItemTreeData",
+  WORKITEMTYPE: "gyde_workitemtype",
+  WORKITEMTYPENAME: "gyde_workitemtypename",
+  WORKITEMTYPETYPE: "gyde_workitemtypetype",
+  WORKITEMDESCRIPTION: "gyde_workitemdescription",
+  SURVEYWORKITEM: "gyde_surveyworkitem",
+  ENTITYNAME: "entityName",
+  TITLE: "gyde_title",
+  PRIORITY: "gyde_priority",
+  WORKITEMRESOURCE: "gyde_workitemresource",
+  DESIGNCLASSIFICATION: "gyde_designclassification",
+  WORKITEMMODULE: "gyde_workitemmodule",
+  GAPFIT: "gyde_gapfit",
+  WORKITEMISV: "gyde_workitemisv",
+  COMPLEXITY: "gyde_complexity",
+  BUILDESTIMATEPTS: "gyde_buildestimatepts",
+  BUILDESTIMATEHRS: "gyde_buildestimatehrs",
 };
 
 export const Texts = {
