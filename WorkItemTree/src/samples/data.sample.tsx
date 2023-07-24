@@ -323,11 +323,11 @@ export const sampleDBData = {
       {
         // "children": [],
         // "switcherIcon": true,
-        "description": null,
+        "description": null, // description
         "hasParent": true,
         "key": "e3b4d193-4b21-ee11-9cbc-6045bdd0ef212",
         "parentSequanceId": 'e3b4d193-4b21-ee11-9cbc-6045bdd0ef22',
-        "title": "API_C1 WI 02-01",
+        "title": "API_C1 WI 02-01", // gyde_title
         "workItemsequance": {
           "sequance": 1,
           "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef212"
@@ -335,7 +335,18 @@ export const sampleDBData = {
         "workItemtype": {
           "type": "Feature",
           "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef122"
-        }
+        },
+        "workItemFields": {
+          "gyde_priority": "",
+          "gyde_gapfit": "",
+          "gyde_workitemresource": "",
+          "gyde_workitemisv": "",
+          "gyde_designclassification": "",
+          "gyde_complexity": "",
+          "gyde_workitemmodule": "",
+          "gyde_buildestimatepts": "",
+          "gyde_buildestimatehrs": "",
+        },
       },
       {
         // "children": [],
@@ -350,7 +361,7 @@ export const sampleDBData = {
           "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef212"
         },
         "workItemtype": {
-          "type": "Feature",
+          "type": "Feature", // gyde_workitemtype
           "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef122"
         }
       },

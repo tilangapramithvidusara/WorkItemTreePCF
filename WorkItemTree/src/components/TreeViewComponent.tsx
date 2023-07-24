@@ -223,12 +223,12 @@ const  TreeViewComponent = () => {
   };
 
   useEffect(() => {
-    // retrieveWorkItemData();
-    // const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
-    // setCurrentLogicalName(currentLogicalName);
-    const data = sampleDBData.workItems;
-    setTreeData(data);
-    setLoadedData(sampleDBData);
+    retrieveWorkItemData();
+    const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    setCurrentLogicalName(currentLogicalName);
+    // const data = sampleDBData.workItems;
+    // setTreeData(data);
+    // setLoadedData(sampleDBData);
   }, []);
 
   const handleClickOutside = (event: any) => {
