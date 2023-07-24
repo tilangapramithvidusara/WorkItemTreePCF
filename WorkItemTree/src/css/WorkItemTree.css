@@ -19,7 +19,7 @@
 }
 
 .custom-container .ant-tree .ant-tree-treenode {
-     padding: 5px 0;
+  padding: 0 0 7px 0;
 }
 
 .custom-container .btn-location-wrap {
@@ -61,4 +61,8 @@
 
 .custom-container .ant-tree-switcher.ant-tree-switcher-noop {
   display: none;
+}
+
+.custom-container .ant-tree-draggable-icon {
+  line-height: 28px;
 }
