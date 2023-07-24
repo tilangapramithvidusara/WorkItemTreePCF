@@ -9,7 +9,7 @@ import { LogicalNames } from '../constants';
 import cloneDeep from 'lodash.clonedeep';
 import { saveTreeDataRequest, updateTreeDataRequest } from '../apis/data.save.apis';
 import { DownOutlined } from '@ant-design/icons';
-
+// import dataImg from "../../images/dots.png";
 import { res_one, res_two, res_three, sampleDBData } from '../samples/data.sample';
 import DropDownComponent from './DropDownComponent';
 import { items } from '../constants/items';
@@ -281,7 +281,9 @@ const  TreeViewComponent = () => {
         <div>
           {currentLogicalName !== LogicalNames.WORKITEM && (
             <div className="btn-location-wrap">
-              <button onClick={() => expandCurrentLocationNodesByKey()}>Current Location Data</button>
+              <button className='btn-data' onClick={() => expandCurrentLocationNodesByKey()}>
+              {/* <img src="{dataImg}" className='icon' alt="icon"/> */}
+                Current Location Data</button>
             </div>
           )}
           <div id="treeElement">
