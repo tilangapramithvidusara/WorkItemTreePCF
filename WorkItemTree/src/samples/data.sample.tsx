@@ -274,3 +274,204 @@ const sampleObject = [
     parentId: "333D7D50-D196-ED11-AAD1-0022481B7CE9", // can be useful but not mandatory yet
   },
 ]
+
+
+const sampleObjectValue = [
+  {
+    title: "Account Management",
+    children: true,
+    id: '45384023-2C04-EE11-8F6E-6045BDD0E823',
+    logicalName: "",
+    sequence: 1,
+    hasParent: false,
+    parentId: "",
+  },
+  {
+    title: "Contact Management",
+    children: true,
+    id: '1C84A943-2C04-EE11-8F6E-6045BDD0E823',
+    logicalName: "",
+    sequence: 2,
+    hasParent: false,
+    parentId: "",
+  },
+]
+
+export const sampleDBData = {
+  "logicalname": "gyde_surveyworkitem",
+  "currentLoactionIds": [], // Id list need to expand current location paths
+  "workItems": [
+   {
+    // "children": [],
+    // "switcherIcon": true, // if there are no children then need this true
+    "description": null,
+    "hasParent": false,
+    "key": "a004ed85-4b21-ee11-9cbc-6045bdd0ef22",
+    "parentSequanceId": null,
+    "title": "API_C1 WI 01",
+    "workItemsequance": {
+     "sequance": 1,
+     "sequanceid": "9f04ed85-4b21-ee11-9cbc-6045bdd0ef22"
+    },
+    "workItemtype": {
+     "type": "Epic",
+     "workitemtypeid": "157c2482-c4dc-ed11-a7c6-6045bdd0ef22"
+    }
+   },
+   {
+    "children": [
+      {
+        // "children": [],
+        // "switcherIcon": true,
+        "description": null,
+        "hasParent": true,
+        "key": "e3b4d193-4b21-ee11-9cbc-6045bdd0ef212",
+        "parentSequanceId": 'e3b4d193-4b21-ee11-9cbc-6045bdd0ef22',
+        "title": "API_C1 WI 02-01",
+        "workItemsequance": {
+          "sequance": 1,
+          "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef212"
+        },
+        "workItemtype": {
+          "type": "Feature",
+          "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef122"
+        }
+      },
+      {
+        // "children": [],
+        // "switcherIcon": true,
+        "description": null,
+        "hasParent": true,
+        "key": "e3b4d193-4b21-ee11-9cbc-6045bdd0ef2442",
+        "parentSequanceId": 'e3b4d193-4b21-ee11-9cbc-6045bdd0ef22',
+        "title": "API_C1 WI 02-02",
+        "workItemsequance": {
+          "sequance": 1,
+          "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef212"
+        },
+        "workItemtype": {
+          "type": "Feature",
+          "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef122"
+        }
+      },
+      {
+        "children": [
+          {
+            // "children": [],
+            // "switcherIcon": true,
+            "description": null,
+            "hasParent": true,
+            "key": "e3b4d193-4b21-ee11-9cbc-6045bdd0ef241242",
+            "parentSequanceId": 'e3b4d193-4b21-ee11-9cbc-6045bdd0ef22',
+            "title": "API_C1 WI 02-02-01",
+            "workItemsequance": {
+              "sequance": 1,
+              "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef212"
+            },
+            "workItemtype": {
+              "type": "Feature",
+              "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef122"
+            }
+          }
+        ],
+        // "switcherIcon": true,
+        "description": null,
+        "hasParent": true,
+        "key": "e3b4d193-4b21-ee11-9cbc-6045bdd0ef24412",
+        "parentSequanceId": 'e3b4d193-4b21-ee11-9cbc-6045bdd0ef22',
+        "title": "API_C1 WI 02-03",
+        "workItemsequance": {
+          "sequance": 1,
+          "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef212"
+        },
+        "workItemtype": {
+          "type": "Feature",
+          "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef122"
+        }
+      }
+    ],
+    // "switcherIcon": false,
+    "description": null,
+    "hasParent": false,
+    "key": "e3b4d193-4b21-ee11-9cbc-6045bdd0ef22",
+    "parentSequanceId": null,
+    "title": "API_C1 WI 02",
+    "workItemsequance": {
+     "sequance": 1,
+     "sequanceid": "e2b4d193-4b21-ee11-9cbc-6045bdd0ef22"
+    },
+    "workItemtype": {
+     "type": "Feature",
+     "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef22"
+    }
+   },
+   {
+    // "children": [],
+    // "switcherIcon": true,
+    "description": null,
+    "hasParent": false,
+    "key": "f9d6989e-4b21-ee11-9cbc-6045bdd0ef22",
+    "parentSequanceId": null,
+    "title": "API_C1 WI 03",
+    "workItemsequance": {
+     "sequance": 2,
+     "sequanceid": "f8d6989e-4b21-ee11-9cbc-6045bdd0ef22"
+    },
+    "workItemtype": {
+     "type": "Epic",
+     "workitemtypeid": "157c2482-c4dc-ed11-a7c6-6045bdd0ef22"
+    }
+   },
+   {
+    // "children": [],
+    // "switcherIcon": true,
+    "description": null,
+    "hasParent": false,
+    "key": "3cb3acac-4b21-ee11-9cbc-6045bdd0ef22",
+    "parentSequanceId": null,
+    "title": "API_C1 WI 04",
+    "workItemsequance": {
+     "sequance": 1,
+     "sequanceid": "3bb3acac-4b21-ee11-9cbc-6045bdd0ef22"
+    },
+    "workItemtype": {
+     "type": "Task",
+     "workitemtypeid": "5c7a6e8a-c4dc-ed11-a7c6-6045bdd0ef22"
+    }
+   },
+   {
+    // "children": [],
+    // "switcherIcon": true,
+    "description": null,
+    "hasParent": false,
+    "key": "bc49dcbc-4b21-ee11-9cbc-6045bdd0ef22",
+    "parentSequanceId": null,
+    "title": "API_C1 WI 05",
+    "workItemsequance": {
+     "sequance": 1,
+     "sequanceid": "bb49dcbc-4b21-ee11-9cbc-6045bdd0ef22"
+    },
+    "workItemtype": {
+     "type": "Feature",
+     "workitemtypeid": "187c2482-c4dc-ed11-a7c6-6045bdd0ef22"
+    }
+   },
+   {
+    "children": null,
+    "switcherIcon": true,
+    "description": null,
+    "hasParent": false,
+    "key": "b97043cd-4b21-ee11-9cbc-6045bdd0ef22",
+    "parentSequanceId": null,
+    "title": "API_C1 WI 06",
+    "workItemsequance": {
+     "sequance": 1,
+     "sequanceid": "b87043cd-4b21-ee11-9cbc-6045bdd0ef22"
+    },
+    "workItemtype": {
+     "type": "User Story",
+     "workitemtypeid": "68f77c92-c4dc-ed11-a7c6-6045bdd0ef22"
+    }
+   }
+  ]
+}

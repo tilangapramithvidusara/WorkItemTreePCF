@@ -3,7 +3,10 @@ export const LogicalNames = {
   CHAPTER: "gyde_surveytemplatechapter", 
   SECTION: "gyde_surveytemplatechaptersection",
   QUESTION: "gyde_surveytemplatechaptersectionquestion",
-  ANSWER: "gyde_surveytemplatequestionanswer"
+  ANSWER: "gyde_surveytemplatequestionanswer",
+  INTERNAL: "gyde_internalid",
+  WORKITEM: "gyde_workitemtemplate",
+  OPERATION: "gyde_GetSurveyWorkItemTreeData",
 };
 
 export const Texts = {
