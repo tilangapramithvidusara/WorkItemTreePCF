@@ -4,7 +4,14 @@ import { arrayFormater } from "../utils/data.formatter.utils";
 import { LogicalNames } from "../constants";
 
 // retrive work items tree data
-export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
+export const retrieveTreeDataRequest = async (
+  node?: any,
+  isFirst?: boolean,
+  currentLogicalNameData?: any,
+  currentSurveyTemplate?: any,
+  currentInternalId?: any,
+  currentWorkItemTemplateId?: any,
+  ): Promise<any[]> => {
   console.log("retrive tree data 'node' ====> ", node);
   try {
     var req: any = {};
@@ -23,9 +30,10 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
       },
     };
 
-    const currentLogicalName = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
-    const currentEntity = await window.parent.Xrm.Page.ui.formContext.data.entity.getId();
-    const currentEntityId = currentEntity.replace(/[{}]/g, '');
+    const currentLogicalName = isFirst ? await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName : currentLogicalNameData.current;
+    isFirst ? currentLogicalNameData.current = currentLogicalName : null
+    // const currentEntity = await window.parent.Xrm.Page.ui.formContext.data.entity.getId();
+    // const currentEntityId = currentEntity.replace(/[{}]/g, '');
     let surveyTemplate = null;
     let workItemTemplateId = null;
     let internalId = null;
@@ -33,31 +41,40 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
     if (currentLogicalName === LogicalNames?.SURVEY) {
       console.log('surevey=====>>>>>>>>');
       
-      surveyTemplate = await window.parent.Xrm.Page.data.entity
+      surveyTemplate = isFirst ? await window.parent.Xrm.Page.data.entity : currentSurveyTemplate.current
         .getId()
         .replace("{", "")
         .replace("}", "");
-        internalId = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue()
+      isFirst ? currentSurveyTemplate.current = await window.parent.Xrm.Page.data.entity : null
+      internalId = isFirst ? await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : currentInternalId.current;
+      isFirst ? currentInternalId.current = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : null
     } else if (currentLogicalName === LogicalNames?.WORKITEM) {
-      workItemTemplateId  = await window.parent.Xrm.Page.data.entity
+      workItemTemplateId  = isFirst ? await window.parent.Xrm.Page.data.entity
         .getId()
         .replace("{", "")
-        .replace("}", ""); 
+        .replace("}", "") : currentWorkItemTemplateId.current; 
+      isFirst ? currentWorkItemTemplateId.current = await window.parent.Xrm.Page.data.entity
+      .getId()
+      .replace("{", "")
+      .replace("}", "") : null
       console.log('run correct if', workItemTemplateId);
       
     } else {
       console.log("elelelelelel");
       
-      surveyTemplate = await 
-        window.parent.Xrm.Page.getAttribute(LogicalNames?.SURVEY).getValue()[0]?.id?.replace("{", "").replace("}", "");
-      internalId = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue()
+      surveyTemplate = isFirst ? await 
+        window.parent.Xrm.Page.getAttribute(LogicalNames?.SURVEY).getValue()[0]?.id?.replace("{", "").replace("}", "") : currentSurveyTemplate.current;
+      isFirst ? currentSurveyTemplate.current = await 
+      window.parent.Xrm.Page.getAttribute(LogicalNames?.SURVEY).getValue()[0]?.id?.replace("{", "").replace("}", "") : null
+      internalId = isFirst ? await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : currentInternalId.current
+      isFirst ? currentInternalId.current = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : null
     }
 
     req.surveytemplateid = surveyTemplate;
     req.relatedsurveyitemid = internalId;
     req.workitemtemplateid = workItemTemplateId;
 
-    console.log("form ids ================+> ", currentEntityId, surveyTemplate, internalId, currentLogicalName, workItemTemplateId, req);
+    console.log("form ids ================+> ", surveyTemplate, internalId, currentLogicalName, workItemTemplateId, req);
     
 
     req.getMetadata = function () {

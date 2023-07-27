@@ -1,18 +1,24 @@
-import { Dropdown } from 'antd'
+import { Dropdown, MenuProps } from 'antd'
 import React, { memo } from 'react'
 
 const DropDownComponent = (
-    {items, onClick, dropdownVisible, hideDropDown, dropdownY, dropdownX}: 
-    {items: any, onClick: any, dropdownVisible: any, hideDropDown: any, dropdownY: any, dropdownX: any}) => 
+    {
+      items, 
+      handleClick, 
+      dropdownVisible, hideDropDown, dropdownY, dropdownX}: 
+    {items: any, 
+      handleClick: any, 
+      dropdownVisible: any, hideDropDown: any, dropdownY: any, dropdownX: any}) => 
   {
-    console.log(",,,,,,mmmmm");
     
   return (
     <div>
       <Dropdown
-        menu={{ items, onClick }}
+        menu={{ 
+          items, 
+        }}
         open={dropdownVisible}
-        // onOpenChange={hideDropDown}
+        onOpenChange={hideDropDown}
         trigger={["click"]}
       >
         <div
@@ -20,8 +26,8 @@ const DropDownComponent = (
             position: "absolute",
             top: dropdownY,
             left: dropdownX,
-            // marginTop:"-250px",
-            // marginLeft:"-70px"
+            marginTop:"-250px",
+            marginLeft:"-70px",
           }}
         ></div>
       </Dropdown>

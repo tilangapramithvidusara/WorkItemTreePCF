@@ -23,6 +23,7 @@ export const LogicalNames = {
   COMPLEXITY: "gyde_complexity",
   BUILDESTIMATEPTS: "gyde_buildestimatepts",
   BUILDESTIMATEHRS: "gyde_buildestimatehrs",
+  COPYWORKITEM: "gyde_CopyWorkItem",
 };
 
 export const Texts = {
@@ -51,5 +52,18 @@ export const FormNames = {
 export const STATUS_CODE = 528670002;
 
 export const DropDownItems = {
-  COPY: 'Copy'
+  COPY: 'Copy Work Item'
+}
+
+export const paneValues = {
+  SAVE: "Save",
+  SAVEANDCLOSE: "Save & Close",
+  COPY: "Copy",
+  DELETE: "Delete",
+  DEACTIVATE: "Deactivate",
+}
+
+export const formText = {
+  CURRENTLOCATIONBUTTON: "Current Context Data",
+  ALLBUTTON: "All Context Data"
 }

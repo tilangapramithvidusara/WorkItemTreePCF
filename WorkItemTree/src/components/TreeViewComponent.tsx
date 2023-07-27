@@ -1,15 +1,15 @@
-import { MenuProps, Spin, notification } from 'antd';
+import { Dropdown, MenuProps, Spin, notification } from 'antd';
 import Tree, { TreeProps } from "antd/es/tree";
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import TitileViewComponent from './TitileViewComponent';
 import { addObjectToTree, findAndChange, getNode } from '../utils/tree.action.utils';
 import { Key } from 'antd/es/table/interface';
 import { retrieveTreeDataRequest } from '../apis/data.retrieve.apis';
-import { LogicalNames } from '../constants';
+import { DropDownItems, LogicalNames, formText, paneValues } from '../constants';
 import cloneDeep from 'lodash.clonedeep';
-import { saveTreeDataRequest, updateTreeDataRequest } from '../apis/data.save.apis';
+import { copyWorkItemRequest, updateTreeDataRequest } from '../apis/data.save.apis';
 import { DownOutlined } from '@ant-design/icons';
-
+// import dataImg from "../../images/dots.png";
 import { res_one, res_two, res_three, sampleDBData } from '../samples/data.sample';
 import DropDownComponent from './DropDownComponent';
 import { items } from '../constants/items';
@@ -19,10 +19,12 @@ import { openSidePane } from '../utils/pane.open.utils';
 const  TreeViewComponent = () => {
   const {DirectoryTree} = Tree;
   const dropdownRef = useRef<any>(null);
+  const rightClickRef = useRef<any>(null)
   const [loadedData, setLoadedData] = useState<any>({});
   const [treeData, setTreeData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]); // "e3b4d193-4b21-ee11-9cbc-6045bdd0ef22"
+  const [previousExpandedKeys, setPreviousExpandedKeys] = useState<any[]>([]);
   const [rightClickedRecord, setRightClickedRecord] = useState<any>();
   const [copiedRecord, setCopiedRecord] = useState<Object>({});
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
@@ -37,11 +39,19 @@ const  TreeViewComponent = () => {
   );
   const [currentLogicalName, setCurrentLogicalName] = useState<string>("");
   const [noData, setNoData] = useState<string>("No Data Found");
+  const [copySuccess, setCopySuccess] = useState<string>("Record copied successfully");
+  const [copyFailed, setCopyFailed] = useState<string>("Record copied Failed");
   const [textObject, setTextObject] = useState<object>({
     saveErrorMessage: "",
     saveSuccessMessage: "",
   })
   const [shiftPressed, setShiftPressed] = useState<boolean>(false);
+  const currentLogicalNameData = useRef(null);
+  const currentSurveyTemplate = useRef(null)
+  const currentInternalId = useRef(null)
+  const currentWorkItemTemplateId = useRef(null);
+
+  const [currentState, setCurrentState] = useState<boolean>(false);
 
   let parentValue: any = null;
   let parentValueDrop: any = null;
@@ -92,10 +102,12 @@ const  TreeViewComponent = () => {
         description: "Failed to change sequence..!",
       });
     } else {
-      setTreeData([]);
-      setExpandedKeys([]);
+      // setTreeData([]);
+      // setPreviousExpandedKeys(expandedKeys)
+      // setExpandedKeys([]);
       setTimeout(async() => {
-        await retrieveWorkItemData();
+        await retrieveWorkItemData(false);
+        // setExpandedKeys(previousExpandedKeys);
         setIsLoading(false);
       }, 100);
       // setIsLoading(false);
@@ -109,13 +121,15 @@ const  TreeViewComponent = () => {
 
   const onRightClick = (info: { event: React.MouseEvent; node: any }) => {
     // info.event.preventDefault();
+    setRightClickedRecord({ ...info.node });
+    rightClickRef.current = info.node
     setDropdownVisible(false);
     console.log('right =======> ', info?.node);
     
     setDropdownX(info.event.clientX);
     setDropdownY(info.event.clientY);
     // changeItemName(info?.node);
-    setRightClickedRecord({ ...rightClickedRecord, ...info.node });
+    // setRightClickedRecord({ ...info.node });
     setTimeout(() => {
       setDropdownVisible(true);
     }, 0);
@@ -136,20 +150,24 @@ const  TreeViewComponent = () => {
     const { node, expanded } = info;
     console.log('expand ====> ', expandedKeySet, expandedKeys);
     setDropdownVisible(false);
+    setCurrentState(false);
     // if (!expandedKeys.includes(expandedKey)) {
     //   setExpandedKeys([...expandedKeys, expandedKey]);
     // }
     setExpandedKeys(expandedKeySet);
   };
 
-  const expandCurrentLocationNodesByKey = (key?: React.Key) => {
+  const expandCurrentLocationNodesByKey = (state?: boolean) => {
     setIsLoading(true);
+    setPreviousExpandedKeys(expandedKeys);
     setExpandedKeys([]);
     const data = treeData;
     setTreeData([]);
     setTimeout(() => {
-      setExpandedKeys(loadedData?.currentNodeWorkitems)
+
+      setExpandedKeys(state ? previousExpandedKeys : loadedData?.currentNodeWorkitems)
       setTreeData(data);
+      setCurrentState(!state);
       // setExpandedKeys([
       //   "e3b4d193-4b21-ee11-9cbc-6045bdd0ef22",
       //   "e3b4d193-4b21-ee11-9cbc-6045bdd0ef24412",
@@ -160,10 +178,12 @@ const  TreeViewComponent = () => {
   };
 
   const retrieveWorkItemData = useCallback(async(info?: any) => {
-    const response: any = await retrieveTreeDataRequest(info);
+    setIsLoading(true);
+    const response: any = await retrieveTreeDataRequest({}, info, currentLogicalNameData, currentSurveyTemplate, currentInternalId, currentWorkItemTemplateId);
     console.log('res data ===> ', response);
     setLoadedData(response)
     setTreeData(response?.workItems);
+    setIsLoading(false);
     // setTreeData(res_one);
     // res_one.map((data: any) => {
     //   if (data.checked)
@@ -207,23 +227,33 @@ const  TreeViewComponent = () => {
     console.log('Not Checked Values:', notCheckedValues);
   };
 
-  const onClick: MenuProps["onClick"] = ({ key }) => {
+  const onClick = ({key, rightClickedRecordData}: {key: string, rightClickedRecordData: any}) => {
+    console.log("key =====> ", key);
+    const rightClickedRecordDetails = rightClickRef.current
+    // const {key} = prop;
     switch (key) {
+      
+      
       case "1": {
         // Copy functionality invoked...
+        console.log("11111111 =====> ", key, rightClickedRecord, rightClickedRecordData, rightClickRef.current);
         setDropdownVisible(false);
+        copyWorkItemRequest(rightClickedRecordDetails, retrieveWorkItemData, copySuccess, copyFailed);
+        // openSidePane(loadedData.logicalName, rightClickedRecordDetails.key, rightClickedRecordDetails, true);
         setIsModalOpen(true);
-        setCopiedRecord({ ...rightClickedRecord });
+        setCopiedRecord({ ...rightClickedRecordDetails });
+        rightClickRef.current = null;
+        // openSidePane(loadedData.logicalName, rightClickedRecord.key, rightClickedRecord, true);
         break;
       }
       default:
         break;
     }
-    setTreeData([...treeData]);
+    // setTreeData([...treeData]);
   };
 
   useEffect(() => {
-    retrieveWorkItemData();
+    retrieveWorkItemData(true);
     const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
     setCurrentLogicalName(currentLogicalName);
     // const data = sampleDBData.workItems;
@@ -233,6 +263,22 @@ const  TreeViewComponent = () => {
 
   const handleClickOutside = (event: any) => {
     if (dropdownRef.current && !(event.target instanceof Node && dropdownRef.current.contains(event.target as HTMLDivElement))) {
+      // console.log('lllllllllll', event.toElement, event.toElement?.textContent);
+      if (event.toElement?.textContent === DropDownItems?.COPY) {
+        onClick({key: "1", rightClickedRecordData: rightClickedRecord});
+      } else if (event.toElement?.textContent === paneValues.COPY) {
+        console.log('copy of side pane');
+      } else if (
+        event.toElement?.textContent === paneValues.SAVE || 
+        event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
+        event.toElement?.textContent === paneValues.DEACTIVATE || 
+        event.toElement?.textContent === paneValues.DELETE
+      ) {
+        retrieveWorkItemData(false);
+      } else {
+        rightClickRef.current = null;
+      }
+      
       setDropdownVisible(false);
     }
   };
@@ -246,19 +292,13 @@ const  TreeViewComponent = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      console.log("press ====> ",  event.key, event);
-      
       if (event.key === 'Shift') {
-        console.log('yes===');
-        
         setShiftPressed(true);
       }
     };
 
     const handleKeyUp = (event: any) => {
-      console.log("unpress ====> ",  event.key, event);
       if (event.key === 'Shift') {
-        console.log('no===');
         setShiftPressed(false);
       }
     };
@@ -272,65 +312,68 @@ const  TreeViewComponent = () => {
     };
   }, []);
 
-  console.log("mmm==> ", treeData, expandedKeys);
-  
-
   return (
     <div className="custom-container" id="custom-container" ref={dropdownRef}>
-      {treeData && treeData.length > 0 ? (
-        <div>
-          {currentLogicalName !== LogicalNames.WORKITEM && (
-            <div className="btn-location-wrap">
-              <button onClick={() => expandCurrentLocationNodesByKey()}>Current Location Data</button>
-            </div>
-          )}
-          <div id="treeElement">
-            <Spin spinning={isLoading}>
-              <DirectoryTree
-                className="draggable-tree"
-                // checkable
-                // checkedKeys={checkedKeys}
-                // onCheck={onCheck}
-                // defaultExpandedKeys={expandedKeys}
-                expandedKeys={expandedKeys}
-                draggable
-                blockNode
-                onDrop={onDrop}
-                treeData={treeData}
-                selectable={true}
-                style={{ paddingRight: '10px' }}
-                onRightClick={onRightClick}
-                onExpand={handleExpand}
-                showLine={true}
-                showIcon={false}//
-                onSelect={(selectedKeys, e) => onClickNode(selectedKeys, e)}
-                switcherIcon={<DownOutlined />}
-                // loadData={onLoadHandler}
-                titleRender={(node: any) => {
-                  return (
-                    <TitileViewComponent node={node}/>
-                  );
-                }}
-              />
-            </Spin>
-            <div>
-              <DropDownComponent
-                items={items}
-                dropdownVisible={dropdownVisible}
-                hideDropDown={hideDropDown}
-                dropdownY={dropdownY}
-                dropdownX={dropdownX}
-                onClick={onClick}
-              />
+      <Spin spinning={isLoading}>
+        {treeData && treeData.length > 0 ? (
+          <div>
+            {currentLogicalName !== LogicalNames.WORKITEM && (
+              <div className="btn-location-wrap">
+                <button className='btn-data' onClick={() => expandCurrentLocationNodesByKey(currentState)}>
+                {/* <img src="{dataImg}" className='icon' alt="icon"/> */}
+                  {currentState ? formText.ALLBUTTON : formText.CURRENTLOCATIONBUTTON}</button>
+              </div>
+            )}
+            <div id="treeElement">
+              
+                <DirectoryTree
+                  className="draggable-tree"
+                  // checkable
+                  // checkedKeys={checkedKeys}
+                  // onCheck={onCheck}
+                  // defaultExpandedKeys={expandedKeys}
+                  expandedKeys={expandedKeys}
+                  draggable
+                  blockNode
+                  onDrop={onDrop}
+                  treeData={treeData}
+                  selectable={true}
+                  style={{ paddingRight: '10px' }}
+                  onRightClick={onRightClick}
+                  onExpand={handleExpand}
+                  showLine={true}
+                  showIcon={false}//
+                  onSelect={(selectedKeys, e) => onClickNode(selectedKeys, e)}
+                  switcherIcon={<DownOutlined />}
+                  // loadData={onLoadHandler}
+                  titleRender={(node: any) => {
+                    return (
+                      <TitileViewComponent node={node}/>
+                    );
+                  }}
+                />
+              
+              {dropdownVisible && (
+                <div>
+                <DropDownComponent
+                  items={items}
+                  dropdownVisible={dropdownVisible}
+                  hideDropDown={hideDropDown}
+                  dropdownY={dropdownY}
+                  dropdownX={dropdownX}
+                  handleClick={onClick}
+                />
+              </div>
+              )}
             </div>
           </div>
-        </div>
-        
-       ) : (
-        <div>
-          <p>{noData}</p>
-        </div>
-      )}
+          
+        ) : (
+          <div>
+            <p>{noData}</p>
+          </div>
+        )}
+      </Spin>
     </div>
   )
 }
