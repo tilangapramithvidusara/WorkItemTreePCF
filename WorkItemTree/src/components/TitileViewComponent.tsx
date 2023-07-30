@@ -3,9 +3,12 @@ import React, { memo } from 'react'
 const TitileViewComponent = ({ node }: { node: any }) => {
   return (
     <span className="ant-tree-node-content-wrapper">
-      {/* <span className="ant-tree-node-content-icon" style={{ paddingRight: '5px' }}>
-        <img src={node?.imgUrl} alt="icon" style={iconStyle} />
-      </span> */}
+      {node?.icon && (
+        <span className="ant-tree-node-content-icon" style={{ paddingRight: '5px' }}>
+        <img src={`data:image/png;base64,${node?.icon}`} alt="icon" style={iconStyle} />
+      </span>
+      )}
+      
       <span className="ant-tree-title" style={titleStyle}>
         {node.title}
       </span>
@@ -17,8 +20,8 @@ const iconStyle = {
   display: 'inline-block',
   verticalAlign: 'middle',
   marginRight: '10px',
-  width: '25px',
-  height: '25px',
+  width: '20px',
+  height: '20px',
 };
 
 const titleStyle = {
