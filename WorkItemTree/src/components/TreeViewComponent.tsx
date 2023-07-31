@@ -228,7 +228,6 @@ const  TreeViewComponent = () => {
   };
 
   const onClick = ({key, rightClickedRecordData}: {key: string, rightClickedRecordData: any}) => {
-    console.log("key =====> ", key);
     const rightClickedRecordDetails = rightClickRef.current
     // const {key} = prop;
     switch (key) {
@@ -317,7 +316,7 @@ const  TreeViewComponent = () => {
       <Spin spinning={isLoading}>
         {treeData && treeData.length > 0 ? (
           <div>
-            {currentLogicalName !== LogicalNames.WORKITEM && (
+            {(currentLogicalName !== LogicalNames.WORKITEM && currentLogicalName !== LogicalNames.SURVEY) && (
               <div className="btn-location-wrap">
                 <button className='btn-data' onClick={() => expandCurrentLocationNodesByKey(currentState)}>
                 {/* <img src="{dataImg}" className='icon' alt="icon"/> */}

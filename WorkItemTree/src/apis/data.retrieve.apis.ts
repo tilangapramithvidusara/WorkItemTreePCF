@@ -41,13 +41,12 @@ export const retrieveTreeDataRequest = async (
     if (currentLogicalName === LogicalNames?.SURVEY) {
       console.log('surevey=====>>>>>>>>');
       
-      surveyTemplate = isFirst ? await window.parent.Xrm.Page.data.entity : currentSurveyTemplate.current
-        .getId()
-        .replace("{", "")
-        .replace("}", "");
+      surveyTemplate = isFirst ? await window.parent.Xrm.Page.data.entity.getId()
+      .replace("{", "")
+      .replace("}", "") : currentSurveyTemplate.current;
       isFirst ? currentSurveyTemplate.current = await window.parent.Xrm.Page.data.entity : null
-      internalId = isFirst ? await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : currentInternalId.current;
-      isFirst ? currentInternalId.current = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : null
+      // internalId = isFirst ? await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : currentInternalId.current;
+      // isFirst ? currentInternalId.current = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : null
     } else if (currentLogicalName === LogicalNames?.WORKITEM) {
       workItemTemplateId  = isFirst ? await window.parent.Xrm.Page.data.entity
         .getId()

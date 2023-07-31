@@ -306,6 +306,7 @@ export const sampleDBData = {
     // "switcherIcon": true, // if there are no children then need this true
     "description": null,
     "hasParent": false,
+    "relatedtocurrentItem": true,
     "key": "a004ed85-4b21-ee11-9cbc-6045bdd0ef22",
     "parentSequanceId": null,
     "title": "API_C1 WI 01",

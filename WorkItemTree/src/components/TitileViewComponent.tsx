@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 
-const TitileViewComponent = ({ node }: { node: any }) => {
+const TitileViewComponent = ({ node }: { node: any }) => {  
   return (
     <span className="ant-tree-node-content-wrapper">
       {node?.icon && (
@@ -9,7 +9,7 @@ const TitileViewComponent = ({ node }: { node: any }) => {
       </span>
       )}
       
-      <span className="ant-tree-title" style={titleStyle}>
+      <span className="ant-tree-title" style={node?.relatedtocurrentItem ? titleStyleCurrent : titleStyle}>
         {node.title}
       </span>
     </span>
@@ -29,5 +29,13 @@ const titleStyle = {
   verticalAlign: 'middle',
   paddingRight: '5px',
 };
+
+const titleStyleCurrent = {
+  display: 'inline-block',
+  verticalAlign: 'middle',
+  paddingRight: '5px',
+  backgroundColor: "#ccccff",
+  borderRadius: "5px",
+}
 
 export default memo(TitileViewComponent);
