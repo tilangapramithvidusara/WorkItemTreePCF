@@ -19,7 +19,7 @@ export const openCopyViewPane = async(
     var entityFormOptions: any = {};
     entityFormOptions["entityName"] = node?.nextLevelLogicalName
   } catch (error) {
-    console.log("open pane error =====> ", error);
+    // console.log("open pane error =====> ", error);
     notification.error({
       message: "Error",
       description: "Copy process failed. Plz Try Again..!",
@@ -39,7 +39,7 @@ export const openSidePane = (
   e: any,
   isCopy?: boolean,
 ) => {
-  console.log('plolol =====>', entName, entId, isCopy, e);
+  // console.log('plolol =====>', entName, entId, isCopy, e);
   
   const openPanes = window.parent.Xrm.App.sidePanes.getAllPanes();
   openPanes.forEach((item: any) => {

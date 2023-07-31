@@ -32,11 +32,11 @@ export const updateTreeDataRequest = async(isReParenting: boolean, node: any, ne
   }
   try {
     const result = await window.parent.Xrm.WebApi.updateRecord("gyde_workitemtemplatesequence", node?.workItemsequance?.sequanceid, record);
-    console.log("result updateTreeDataRequest ==========> ", result);
+    // console.log("result updateTreeDataRequest ==========> ", result);
     return { error: false, data: result };
     
   } catch (error) {
-    console.log("error updateTreeDataRequest =======> ", error);
+    // console.log("error updateTreeDataRequest =======> ", error);
     return { error: true, data: {} };
     
   }
@@ -64,7 +64,7 @@ export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, c
       }
     ).then(async function (responseBody: any) {
       var result = responseBody;
-      console.log("copy result", result);
+      // console.log("copy result", result);
       // Return Type: mscrm.gyde_CopyWorkItemResponse
       // Output Parameters
       var newId = result["newid"]; // Edm.Guid
@@ -81,7 +81,7 @@ export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, c
         },
       }, false);
     }).catch(function (error: any) {
-      console.log("copy error", error.message);
+      // console.log("copy error", error.message);
       notification.error({
         message: "Error",
         description: copyFailed,

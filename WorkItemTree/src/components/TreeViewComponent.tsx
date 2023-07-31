@@ -1,16 +1,13 @@
-import { Dropdown, MenuProps, Spin, notification } from 'antd';
+import {Spin, notification } from 'antd';
 import Tree, { TreeProps } from "antd/es/tree";
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import TitileViewComponent from './TitileViewComponent';
-import { addObjectToTree, findAndChange, getNode } from '../utils/tree.action.utils';
 import { Key } from 'antd/es/table/interface';
 import { retrieveTreeDataRequest } from '../apis/data.retrieve.apis';
 import { DropDownItems, LogicalNames, formText, paneValues } from '../constants';
-import cloneDeep from 'lodash.clonedeep';
 import { copyWorkItemRequest, updateTreeDataRequest } from '../apis/data.save.apis';
 import { DownOutlined } from '@ant-design/icons';
-// import dataImg from "../../images/dots.png";
-import { res_one, res_two, res_three, sampleDBData } from '../samples/data.sample';
+import {sampleDBData} from '../samples/data.sample';
 import DropDownComponent from './DropDownComponent';
 import { items } from '../constants/items';
 import { openSidePane } from '../utils/pane.open.utils';
@@ -78,12 +75,8 @@ const  TreeViewComponent = () => {
     const dropPosition =
       info?.dropPosition - Number(dropPos[dropPos.length - 1]);
 
-    // const isReparenting = !(parentValue.key === parentValueDrop.key)
-    console.log("wswsws =====> ", shiftPressed, (info?.node.parentSequanceId && info?.dragNode.parentSequanceId), (info?.node.parentSequanceId === info?.dragNode.parentSequanceId));
-    
-    const isReparenting = !(shiftPressed && (info?.node.parentSequanceId && info?.dragNode.parentSequanceId) && (info?.node.parentSequanceId === info?.dragNode.parentSequanceId));
-    console.log("qaqaqaq======> ", isReparenting);
-    
+    // const isReparenting = !(parentValue.key === parentValueDrop.key)    
+    const isReparenting = !(shiftPressed && (info?.node.parentSequanceId && info?.dragNode.parentSequanceId) && (info?.node.parentSequanceId === info?.dragNode.parentSequanceId));    
 
     if (!isReparenting) {
       findParent(treeData[0], info?.dragNode?.key, {});
@@ -124,7 +117,6 @@ const  TreeViewComponent = () => {
     setRightClickedRecord({ ...info.node });
     rightClickRef.current = info.node
     setDropdownVisible(false);
-    console.log('right =======> ', info?.node);
     
     setDropdownX(info.event.clientX);
     setDropdownY(info.event.clientY);
@@ -148,7 +140,6 @@ const  TreeViewComponent = () => {
     info: { expanded: boolean; node: any }
   ) => {
     const { node, expanded } = info;
-    console.log('expand ====> ', expandedKeySet, expandedKeys);
     setDropdownVisible(false);
     setCurrentState(false);
     // if (!expandedKeys.includes(expandedKey)) {
@@ -180,7 +171,7 @@ const  TreeViewComponent = () => {
   const retrieveWorkItemData = useCallback(async(info?: any) => {
     setIsLoading(true);
     const response: any = await retrieveTreeDataRequest({}, info, currentLogicalNameData, currentSurveyTemplate, currentInternalId, currentWorkItemTemplateId);
-    console.log('res data ===> ', response);
+    // console.log('res data ===> ', response);
     setLoadedData(response)
     setTreeData(response?.workItems);
     setIsLoading(false);
@@ -223,8 +214,8 @@ const  TreeViewComponent = () => {
     };
 
     traverseTree(treeData);
-    console.log('Checked Values:', checkedValues);
-    console.log('Not Checked Values:', notCheckedValues);
+    // console.log('Checked Values:', checkedValues);
+    // console.log('Not Checked Values:', notCheckedValues);
   };
 
   const onClick = ({key, rightClickedRecordData}: {key: string, rightClickedRecordData: any}) => {
@@ -235,7 +226,6 @@ const  TreeViewComponent = () => {
       
       case "1": {
         // Copy functionality invoked...
-        console.log("11111111 =====> ", key, rightClickedRecord, rightClickedRecordData, rightClickRef.current);
         setDropdownVisible(false);
         copyWorkItemRequest(rightClickedRecordDetails, retrieveWorkItemData, copySuccess, copyFailed);
         // openSidePane(loadedData.logicalName, rightClickedRecordDetails.key, rightClickedRecordDetails, true);
@@ -266,7 +256,7 @@ const  TreeViewComponent = () => {
       if (event.toElement?.textContent === DropDownItems?.COPY) {
         onClick({key: "1", rightClickedRecordData: rightClickedRecord});
       } else if (event.toElement?.textContent === paneValues.COPY) {
-        console.log('copy of side pane');
+        // console.log('copy of side pane');
       } else if (
         event.toElement?.textContent === paneValues.SAVE || 
         event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
