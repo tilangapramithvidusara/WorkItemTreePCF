@@ -24,13 +24,27 @@
 
 .custom-container .btn-location-wrap {
   text-align: left;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.custom-container .btn-location-wrap .btn-data.left {
+  border-right: 0;
+  border-radius: 2px 0 0 2px;
+}
+
+.custom-container .btn-location-wrap .btn-data.right {
+  border-radius: 0 2px 2px 0;
+}
+
+.custom-container .btn-location-wrap .btn-data.active {
+  background-color: rgb(34, 102, 227);
+  color: white;
+  border: rgb(34, 102, 227);
 }
 
 .custom-container .ant-tree-title {
   color: #616161 !important;
   font-size: 14px;
-  font-weight: 500;
 }
 
 .custom-container
@@ -70,8 +84,9 @@
 .custom-container .btn-data {
   background-color: #F8F8F8;
   border: 0.5px solid #E6E6E6;
-  border-radius: 5px;
-  height: 30px
+  border-radius: 2px;
+  height: 30px;
+  padding: 0 5px;
 }
 
 .custom-container .btn-data .icon{

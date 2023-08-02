@@ -19,9 +19,8 @@ const TitileViewComponent = ({ node }: { node: any }) => {
 const iconStyle = {
   display: 'inline-block',
   verticalAlign: 'middle',
-  marginRight: '10px',
-  width: '20px',
-  height: '20px',
+  marginRight: '5px',
+  width: '18px',
 };
 
 const titleStyle = {
@@ -33,9 +32,9 @@ const titleStyle = {
 const titleStyleCurrent = {
   display: 'inline-block',
   verticalAlign: 'middle',
-  paddingRight: '5px',
-  backgroundColor: "#ccccff",
-  borderRadius: "5px",
+  padding: '2px 10px',
+  backgroundColor: "#d8e6fb",
+  borderRadius: "2px",
 }
 
 export default memo(TitileViewComponent);
