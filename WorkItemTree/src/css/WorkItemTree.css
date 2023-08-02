@@ -1,4 +1,4 @@
-.ant-tree.ant-tree-block-node
+.tree-container .ant-tree.ant-tree-block-node
   .ant-tree-list-holder-inner
   .ant-tree-node-content-wrapper {
   flex: unset !important;
@@ -8,88 +8,89 @@
   border-width: 0;
 }
 
-.custom-container
+.tree-container.tree-container
   .ant-tree.ant-tree-directory
   .ant-tree-treenode-selected::before {
   background-color: #edebe9 !important;
 }
 
-.custom-container .ant-tree.ant-tree-directory .ant-tree-treenode:hover:before {
+.tree-container .ant-tree.ant-tree-directory .ant-tree-treenode:hover:before {
   background-color: #edebe9 !important;
 }
 
-.custom-container .ant-tree .ant-tree-treenode {
+.tree-container .ant-tree .ant-tree-treenode {
   padding: 0 0 7px 0;
 }
 
-.custom-container .btn-location-wrap {
+.tree-container .btn-location-wrap {
   text-align: left;
   margin-bottom: 20px;
 }
 
-.custom-container .btn-location-wrap .btn-data.left {
+.tree-container .btn-location-wrap .btn-data.left {
   border-right: 0;
   border-radius: 2px 0 0 2px;
 }
 
-.custom-container .btn-location-wrap .btn-data.right {
+.tree-container .btn-location-wrap .btn-data.right {
   border-radius: 0 2px 2px 0;
 }
 
-.custom-container .btn-location-wrap .btn-data.active {
+.tree-container .btn-location-wrap .btn-data.active {
   background-color: rgb(34, 102, 227);
   color: white;
   border: rgb(34, 102, 227);
 }
 
-.custom-container .ant-tree-title {
+.tree-container .ant-tree-title {
   color: #616161 !important;
   font-size: 14px;
 }
 
-.custom-container
+.tree-container
   .ant-tree.ant-tree-directory
   .ant-tree-treenode-selected
   .ant-tree-switcher {
   color: #323130;
 }
 
-.drop-target{
+.tree-container .drop-target{
   background-color: #e3ebf2 !important;
 }
 
-.ant-tree-drop-indicator {
+.tree-container .ant-tree-drop-indicator {
   display: none !important;
 }
 
-.tree-title {
+.tree-container .tree-title {
   text-align: left;
   font-size: 20px;
   color: #2E2E2E;
   font-weight: 600;
 }
 
-.ant-tree-show-line .ant-tree-indent-unit:before {
+.tree-container .ant-tree-show-line .ant-tree-indent-unit:before {
   display: none;
 }
 
-.custom-container .ant-tree-switcher.ant-tree-switcher-noop {
+.tree-container .ant-tree-switcher.ant-tree-switcher-noop {
   display: none;
 }
 
-.custom-container .ant-tree-draggable-icon {
+.tree-container .ant-tree-draggable-icon {
   line-height: 28px;
 }
 
-.custom-container .btn-data {
+.tree-container .btn-data {
   background-color: #F8F8F8;
   border: 0.5px solid #E6E6E6;
   border-radius: 2px;
   height: 30px;
   padding: 0 5px;
+  cursor: pointer;
 }
 
-.custom-container .btn-data .icon{
+.tree-container .btn-data .icon{
   width: 12px;
   margin-right: 5px;
 }

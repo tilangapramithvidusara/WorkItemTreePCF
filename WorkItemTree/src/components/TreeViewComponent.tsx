@@ -302,7 +302,7 @@ const  TreeViewComponent = () => {
   }, []);
 
   return (
-    <div className="custom-container" id="custom-container" ref={dropdownRef}>
+    <div className="custom-container tree-container" id="custom-container" ref={dropdownRef}>
       <Spin spinning={isLoading}>
         {treeData && treeData.length > 0 ? (
           <div>
