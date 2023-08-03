@@ -242,12 +242,12 @@ const  TreeViewComponent = () => {
   };
 
   useEffect(() => {
-    // retrieveWorkItemData(true);
-    // const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
-    // setCurrentLogicalName(currentLogicalName);
-    const data = sampleDBData.workItems;
-    setTreeData(data);
-    setLoadedData(sampleDBData);
+    retrieveWorkItemData(true);
+    const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    setCurrentLogicalName(currentLogicalName);
+    // const data = sampleDBData.workItems;
+    // setTreeData(data);
+    // setLoadedData(sampleDBData);
   }, []);
 
   const handleClickOutside = (event: any) => {
@@ -308,14 +308,13 @@ const  TreeViewComponent = () => {
           <div>
             {(currentLogicalName !== LogicalNames.WORKITEM && currentLogicalName !== LogicalNames.SURVEY) && (
               <div className="btn-location-wrap">
-                <button className='btn-data left active' onClick={() => expandCurrentLocationNodesByKey(currentState)}>
+                <button className={`btn-data ${currentState ? '' : 'active'}`} onClick={() => expandCurrentLocationNodesByKey(currentState)}>
                   {/* {currentState ? formText.ALLBUTTON : formText.CURRENTLOCATIONBUTTON} */}
                   {formText.ALLBUTTON}
                 </button>
-               <button className='btn-data right' onClick={() => expandCurrentLocationNodesByKey(currentState)}>
+               <button className={`btn-data right ${currentState ? 'active' : ''}`} onClick={() => expandCurrentLocationNodesByKey(currentState)}>
                  {formText.CURRENTLOCATIONBUTTON}
                 </button>
-                 
              </div>
             )}
             <div id="treeElement">

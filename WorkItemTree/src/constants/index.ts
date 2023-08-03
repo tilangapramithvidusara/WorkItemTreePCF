@@ -64,6 +64,6 @@ export const paneValues = {
 }
 
 export const formText = {
-  CURRENTLOCATIONBUTTON: "Current Context Data",
-  ALLBUTTON: "All Context Data"
+  CURRENTLOCATIONBUTTON: "Current Context Work Items",
+  ALLBUTTON: "All Context Work Items"
 }
