@@ -1,16 +1,14 @@
 import React, { memo } from 'react'
 
-const TitileViewComponent = ({ node }: { node: any }) => {  
+const TitileViewComponent = ({ node, imageUrl }: { node: any, imageUrl: string }) => {  
   return (
     <span className="ant-tree-node-content-wrapper">
-      {node?.icon && (
-        <span className="ant-tree-node-content-icon" style={{ paddingRight: '5px' }}>
-        <img src={`data:image/png;base64,${node?.icon}`} alt="icon" style={iconStyle} />
+      <span className="ant-tree-node-content-icon" style={{ paddingRight: '5px' }}>
+        <img src={node?.icon ? `data:image/png;base64,${node?.icon}` : imageUrl} alt="icon" style={iconStyle} />
       </span>
-      )}
       
       <span className="ant-tree-title" style={node?.relatedtocurrentItem ? titleStyleCurrent : titleStyle}>
-        {node.title}
+        {node?.title}
       </span>
     </span>
   );

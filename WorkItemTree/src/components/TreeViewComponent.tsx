@@ -13,7 +13,7 @@ import { items } from '../constants/items';
 import { openSidePane } from '../utils/pane.open.utils';
 
 
-const  TreeViewComponent = () => {
+const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const {DirectoryTree} = Tree;
   const dropdownRef = useRef<any>(null);
   const rightClickRef = useRef<any>(null)
@@ -168,10 +168,12 @@ const  TreeViewComponent = () => {
     }, 100);
   };
 
-  const retrieveWorkItemData = useCallback(async(info?: any) => {
+  const retrieveWorkItemData = useCallback(async(info?: boolean) => {
+    console.log('iiiiiiijjjjjj ====> ', info);
+    
     setIsLoading(true);
     const response: any = await retrieveTreeDataRequest({}, info, currentLogicalNameData, currentSurveyTemplate, currentInternalId, currentWorkItemTemplateId);
-    // console.log('res data ===> ', response);
+    console.log('res data ===> ', response);
     setLoadedData(response)
     setTreeData(response?.workItems);
     setIsLoading(false);
@@ -251,19 +253,24 @@ const  TreeViewComponent = () => {
   }, []);
 
   const handleClickOutside = (event: any) => {
+    // console.log('evenfe ==. ', event, dropdownRef.current, event.target instanceof Node, dropdownRef.current.contains(event.target as HTMLDivElement), dropdownRef.current && !(event.target instanceof Node && dropdownRef.current.contains(event.target as HTMLDivElement)));
+    
     if (dropdownRef.current && !(event.target instanceof Node && dropdownRef.current.contains(event.target as HTMLDivElement))) {
       // console.log('lllllllllll', event.toElement, event.toElement?.textContent);
       if (event.toElement?.textContent === DropDownItems?.COPY) {
         onClick({key: "1", rightClickedRecordData: rightClickedRecord});
       } else if (event.toElement?.textContent === paneValues.COPY) {
-        // console.log('copy of side pane');
+        console.log('copy of side pane');
       } else if (
         event.toElement?.textContent === paneValues.SAVE || 
         event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
         event.toElement?.textContent === paneValues.DEACTIVATE || 
         event.toElement?.textContent === paneValues.DELETE
       ) {
-        retrieveWorkItemData(false);
+        setTimeout(() => {
+          retrieveWorkItemData(false);
+        }, 1000)
+        // retrieveWorkItemData(false);
       } else {
         rightClickRef.current = null;
       }
@@ -341,7 +348,7 @@ const  TreeViewComponent = () => {
                   // loadData={onLoadHandler}
                   titleRender={(node: any) => {
                     return (
-                      <TitileViewComponent node={node}/>
+                      <TitileViewComponent node={node} imageUrl={imageUrl}/>
                     );
                   }}
                 />

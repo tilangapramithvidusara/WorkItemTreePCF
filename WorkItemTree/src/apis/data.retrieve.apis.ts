@@ -10,7 +10,7 @@ export const retrieveTreeDataRequest = async (
   currentInternalId?: any,
   currentWorkItemTemplateId?: any,
   ): Promise<any[]> => {
-  // console.log("retrive tree data 'node' ====> ", node);
+  // console.log("retrive tree data 'node' ====> ", node, isFirst, currentLogicalNameData, currentSurveyTemplate, currentWorkItemTemplateId);
   try {
     var req: any = {};
     var parameterTypes: any = {
@@ -42,7 +42,9 @@ export const retrieveTreeDataRequest = async (
       surveyTemplate = isFirst ? await window.parent.Xrm.Page.data.entity.getId()
       .replace("{", "")
       .replace("}", "") : currentSurveyTemplate.current;
-      isFirst ? currentSurveyTemplate.current = await window.parent.Xrm.Page.data.entity : null
+      isFirst ? currentSurveyTemplate.current = await window.parent.Xrm.Page.data.entity.getId()
+      .replace("{", "")
+      .replace("}", "") : null
       // internalId = isFirst ? await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : currentInternalId.current;
       // isFirst ? currentInternalId.current = await window.parent.Xrm.Page.getAttribute(LogicalNames?.INTERNAL).getValue() : null
     } else if (currentLogicalName === LogicalNames?.WORKITEM) {

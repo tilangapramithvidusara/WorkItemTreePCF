@@ -1,11 +1,16 @@
 import React from 'react';
 import TreeViewComponent from './components/TreeViewComponent';
 
-export default function App() {
+interface MyComponentProps {
+  imageUrl: any;
+}
+const  App: React.FC<MyComponentProps> = ({ imageUrl }) => {
   return (
     <div>
       {/* <p>Work Items Tree</p> */}
-      <TreeViewComponent />
+      <TreeViewComponent imageUrl={imageUrl} />
     </div>
   )
 }
+
+export default App;

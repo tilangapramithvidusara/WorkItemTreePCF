@@ -3,9 +3,16 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./src/App";
 
+interface MyInputs extends IInputs {
+    imageUrl: string;
+}
+
 export class WorkItemTree implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
     private container: HTMLDivElement;
+    private imgElement:HTMLImageElement;
+    private imageUrl: string;
+    
     constructor() {}
 
     /**
@@ -17,9 +24,30 @@ export class WorkItemTree implements ComponentFramework.StandardControl<IInputs,
      * @param container If a control is marked control-type='standard', it will receive an empty div element within which it can render its content.
      */
     public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void {
+        this.imgElement = document.createElement("img");
+		context.resources.getResource("defaulticon.png", this.setImage.bind(this, false, "png"), this.showError.bind(this));
+		container.appendChild(this.imgElement);
         this.container = container;
     }
 
+    private setImage(shouldUpdateOutput:boolean, fileType: string, fileContent: string): void
+	{
+        this.imageUrl = this.generateImageSrcUrl(fileType, fileContent);
+        this.imgElement.src = this.imageUrl;
+        this.updateView();
+        
+	}
+
+    private generateImageSrcUrl(fileType: string, fileContent: string): string
+	{
+		return  "data:image/" + fileType + ";base64, " + fileContent;
+	}
+
+    private showError(): void
+	{
+        console.log('error occur');
+        
+	}
     /**
      * Called when any value in the property bag has changed. This includes field values, data-sets, global values such as container height and width, offline status, control metadata values such as label, visible, etc.
      * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
@@ -29,17 +57,22 @@ export class WorkItemTree implements ComponentFramework.StandardControl<IInputs,
       }
     
     private renderComponent(): void {
-        ReactDOM.render(React.createElement(App), this.container);
+        if (this.imageUrl && !this.imageUrl.includes('undefined')) {
+            
+            ReactDOM.render(React.createElement(App, { imageUrl: this.imageUrl }), this.container);
+        } else {
+            ReactDOM.render(React.createElement(App), this.container);
+        }
     }
 
     /**
      * It is called by the framework prior to a control receiving new data.
      * @returns an object based on nomenclature defined in manifest, expecting object[s] for property marked as “bound” or “output”
      */
-    // public getOutputs(): IOutputs
-    // {
-    //     return {};
-    // }
+    public getOutputs(): IOutputs
+    {
+        return {};
+    }
 
     /**
      * Called when the control is to be removed from the DOM tree. Controls should use this call for cleanup.
