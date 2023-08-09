@@ -68,7 +68,7 @@ export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, c
       // Return Type: mscrm.gyde_CopyWorkItemResponse
       // Output Parameters
       var newId = result["newid"]; // Edm.Guid
-      notification.error({
+      notification.success({
         message: "Success",
         description: copySuccess,
       });
