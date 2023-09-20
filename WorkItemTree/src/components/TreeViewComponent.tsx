@@ -38,11 +38,16 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const [noData, setNoData] = useState<string>("No Data Found");
   const [copySuccess, setCopySuccess] = useState<string>("Record copied successfully");
   const [copyFailed, setCopyFailed] = useState<string>("Record copied Failed");
+  const [errorText, setErrorText] = useState<string>("Error");
+  const [successText, setSuccessText] = useState<string>("Success");
+  const [failedToChangeSequence, setFailedToChangeSequence] = useState<string>("Failed to change sequence..!")
   const [textObject, setTextObject] = useState<object>({
     saveErrorMessage: "",
     saveSuccessMessage: "",
   })
   const [shiftPressed, setShiftPressed] = useState<boolean>(false);
+  const [isDisable, setIsDisable] = useState<boolean>(false);
+
   const currentLogicalNameData = useRef(null);
   const currentSurveyTemplate = useRef(null)
   const currentInternalId = useRef(null)
@@ -52,6 +57,113 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
 
   let parentValue: any = null;
   let parentValueDrop: any = null;
+
+  const loadResourceString = async () => {
+
+    const url = await window.parent.Xrm.Utility.getGlobalContext().getClientUrl();
+    const language = await window.parent.Xrm.Utility.getGlobalContext().userSettings.languageId;
+    console.log('language ====> ', language);
+    const webResourceUrl = `${url}/WebResources/gyde_localizedstrings.${language}.resx`;
+
+    try {
+      const response = await fetch(`${webResourceUrl}`);
+      const data = await response.text();
+      const filterKeys = ['noData', 'copySuccess', 'copyFailed', 'errorText', 'successText', "failedToChangeSequence"]; // Replace with the key you want to filter
+      filterKeys.map((filterKey: string, index: number) => {
+        const parser = new DOMParser();
+        // Parse the XML string
+        const xmlDoc = parser.parseFromString(data, "text/xml");
+        // Find the specific data element with the given key
+        const dataNode: any = xmlDoc.querySelector(`data[name="${filterKey}"]`);
+        // Extract the value from the data element
+        const value: any = dataNode?.querySelector("value").textContent;
+
+        if (index === 0 && value) {
+          setNoData(value)
+        }
+        if (index === 1 && value) {
+          setCopySuccess(value)
+        }
+        if (index === 2 && value) {
+          setCopyFailed(value)
+        } 
+        if (index === 3 && value) {
+          setErrorText(value)
+        }
+        if (index === 4 && value) {
+          setSuccessText(value)
+        }
+        if (index === 5 && value) {
+          setFailedToChangeSequence(value)
+        }
+        console.log('data ====> ',  index, value); 
+      });
+      // this.setState({ data });
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  }
+
+  const retriveTemplateHandler = async () => {
+    try {
+      const currentLocation = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+      console.log('currentLocation==> ', currentLocation);
+      
+      let surveyTemplate = ''
+      if (currentLocation === LogicalNames?.SURVEY) {
+        surveyTemplate = await window.parent.Xrm.Page.data.entity
+          .getId()
+          .replace("{", "")
+          .replace("}", "");
+        console.log('1 ==> ', surveyTemplate);
+        
+      } else if (currentLocation == LogicalNames?.WORKITEM) {
+        surveyTemplate = await window.parent.Xrm.Page.data.entity
+          .getId()
+          .replace("{", "")
+          .replace("}", "")
+        console.log('2 ==> ', surveyTemplate);
+      } else {
+        surveyTemplate = await window.parent.Xrm.Page.getAttribute("gyde_surveytemplate")?.getValue()[0]?.id?.replace("{", "")
+          .replace("}", "");
+        console.log('3 ==> ', surveyTemplate);
+      }
+      
+      console.log('id ===> ', surveyTemplate);
+      
+      window.parent.Xrm.WebApi.retrieveRecord(currentLocation, surveyTemplate, "?$select=statuscode").then(
+        function success(result: any) {
+            console.log("result status ====>", result.statuscode, (currentLogicalName === LogicalNames?.SURVEY && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)), (currentLogicalName === LogicalNames?.WORKITEM && (result.statuscode == 528670001 || result.statuscode == 528670002 || result.statuscode == 2)), ((currentLogicalName !== LogicalNames?.WORKITEM && currentLogicalName !== LogicalNames?.SURVEY) && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)), (
+              (currentLocation === LogicalNames?.SURVEY && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)) 
+              ||
+              (currentLocation === LogicalNames?.WORKITEM && (result.statuscode == 528670001 || result.statuscode == 528670002 || result.statuscode == 2))
+              ||
+              ((currentLocation !== LogicalNames?.WORKITEM && currentLocation !== LogicalNames?.SURVEY) && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2))
+            ) );
+            if (
+              (currentLocation === LogicalNames?.SURVEY && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)) 
+              ||
+              (currentLocation === LogicalNames?.WORKITEM && (result.statuscode == 528670001 || result.statuscode == 528670002 || result.statuscode == 2))
+              ||
+              ((currentLocation !== LogicalNames?.WORKITEM && currentLocation !== LogicalNames?.SURVEY) && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2))
+            ) {
+              setIsDisable(true)
+            } else {
+              setIsDisable(false);
+            }
+            // perform operations on record retrieval
+        },
+        function (error: any) {
+            console.log("error message ====> ", error.message);
+            setIsDisable(false);
+            // handle error conditions
+        }
+      );
+    } catch (error: any) {
+      console.log("error22 message ====> ", error);
+      setIsDisable(false);
+    }
+  }
 
   const findParent = (tree: any, key: any, parent: any) => {
     if (tree.key === key) {
@@ -91,8 +203,8 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       parentValue = null;
       parentValueDrop = null;
       notification.error({
-        message: "Error",
-        description: "Failed to change sequence..!",
+        message: errorText,
+        description: failedToChangeSequence,
       });
     } else {
       // setTreeData([]);
@@ -176,6 +288,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     console.log('res data ===> ', response);
     setLoadedData(response)
     setTreeData(response?.workItems);
+    loadResourceString();
     setIsLoading(false);
     // setTreeData(res_one);
     // res_one.map((data: any) => {
@@ -229,7 +342,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       case "1": {
         // Copy functionality invoked...
         setDropdownVisible(false);
-        copyWorkItemRequest(rightClickedRecordDetails, retrieveWorkItemData, copySuccess, copyFailed);
+        copyWorkItemRequest(rightClickedRecordDetails, retrieveWorkItemData, copySuccess, copyFailed, successText, errorText);
         // openSidePane(loadedData.logicalName, rightClickedRecordDetails.key, rightClickedRecordDetails, true);
         setIsModalOpen(true);
         setCopiedRecord({ ...rightClickedRecordDetails });
@@ -247,6 +360,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     retrieveWorkItemData(true);
     const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
     setCurrentLogicalName(currentLogicalName);
+    retriveTemplateHandler();
     // const data = sampleDBData.workItems;
     // setTreeData(data);
     // setLoadedData(sampleDBData);
@@ -333,7 +447,8 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
                   // onCheck={onCheck}
                   // defaultExpandedKeys={expandedKeys}
                   expandedKeys={expandedKeys}
-                  draggable
+                  draggable={!isDisable}
+                  // draggable
                   blockNode
                   onDrop={onDrop}
                   treeData={treeData}
@@ -353,7 +468,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
                   }}
                 />
               
-              {dropdownVisible && (
+              {dropdownVisible && !isDisable && (
                 <div>
                 <DropDownComponent
                   items={items}

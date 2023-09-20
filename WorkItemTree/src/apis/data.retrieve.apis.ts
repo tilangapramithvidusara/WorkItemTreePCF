@@ -26,6 +26,10 @@ export const retrieveTreeDataRequest = async (
         typeName: "Edm.String",
         structuralProperty: 1,
       },
+      islist: {
+        typeName: "Edm.Boolean",
+        structuralProperty: 1,
+      }
     };
 
     const currentLogicalName = isFirst ? await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName : currentLogicalNameData.current;
@@ -72,6 +76,7 @@ export const retrieveTreeDataRequest = async (
     req.surveytemplateid = surveyTemplate;
     req.relatedsurveyitemid = internalId;
     req.workitemtemplateid = workItemTemplateId;
+    req.islist = false;
 
     // console.log("form ids ================+> ", surveyTemplate, internalId, currentLogicalName, workItemTemplateId, req);
     

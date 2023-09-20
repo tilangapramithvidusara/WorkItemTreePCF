@@ -3,7 +3,10 @@ import React, { memo } from 'react'
 const TitileViewComponent = ({ node, imageUrl }: { node: any, imageUrl: string }) => {  
   return (
     <span className="ant-tree-node-content-wrapper">
-      <span className="ant-tree-node-content-icon" style={{ paddingRight: '5px' }}>
+      <span className="ant-tree-node-content-icon" style={{ 
+        // paddingRight: node?.children && node?.children?.length > 0 ? '0px' : '10px', 
+        paddingLeft: node?.children && node?.children?.length > 0 ? '0px' : '24px' 
+      }}>
         <img src={node?.icon ? `data:image/png;base64,${node?.icon}` : imageUrl} alt="icon" style={iconStyle} />
       </span>
       

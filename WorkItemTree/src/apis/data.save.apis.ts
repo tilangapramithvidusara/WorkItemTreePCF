@@ -42,7 +42,7 @@ export const updateTreeDataRequest = async(isReParenting: boolean, node: any, ne
   }
 }
 
-export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, copySuccess: string, copyFailed: string) => {
+export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, copySuccess: string, copyFailed: string, successText: string, errorText: string) => {
   var execute_gyde_CopyWorkItem_Request = {
       // Parameters
       workitemtemplatesequenceid: {guid: node?.workItemsequance?.sequanceid }, // Edm.Guid
@@ -69,7 +69,7 @@ export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, c
       // Output Parameters
       var newId = result["newid"]; // Edm.Guid
       notification.success({
-        message: "Success",
+        message: successText,
         description: copySuccess,
       });
 
@@ -83,7 +83,7 @@ export const copyWorkItemRequest = async(node: any, retrieveWorkItemData: any, c
     }).catch(function (error: any) {
       // console.log("copy error", error.message);
       notification.error({
-        message: "Error",
+        message: errorText,
         description: copyFailed,
       });
     });
