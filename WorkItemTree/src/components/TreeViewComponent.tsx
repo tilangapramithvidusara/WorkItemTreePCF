@@ -131,7 +131,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       
       console.log('id ===> ', surveyTemplate);
       
-      window.parent.Xrm.WebApi.retrieveRecord(currentLocation, surveyTemplate, "?$select=statuscode").then(
+      window.parent.Xrm.WebApi.retrieveRecord(currentLocation === LogicalNames?.WORKITEM ? LogicalNames?.WORKITEM : LogicalNames?.SURVEY, surveyTemplate, "?$select=statuscode").then(
         function success(result: any) {
             console.log("result status ====>", result.statuscode, (currentLogicalName === LogicalNames?.SURVEY && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)), (currentLogicalName === LogicalNames?.WORKITEM && (result.statuscode == 528670001 || result.statuscode == 528670002 || result.statuscode == 2)), ((currentLogicalName !== LogicalNames?.WORKITEM && currentLogicalName !== LogicalNames?.SURVEY) && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)), (
               (currentLocation === LogicalNames?.SURVEY && (result.statuscode == 528670003 || result.statuscode == 528670005 || result.statuscode == 2)) 
