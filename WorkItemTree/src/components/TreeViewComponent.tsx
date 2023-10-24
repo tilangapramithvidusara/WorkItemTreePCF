@@ -3,7 +3,7 @@ import Tree, { TreeProps } from "antd/es/tree";
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import TitileViewComponent from './TitileViewComponent';
 import { Key } from 'antd/es/table/interface';
-import { retrieveTreeDataRequest } from '../apis/data.retrieve.apis';
+import { loadResourceString, retrieveTreeDataRequest } from '../apis/data.retrieve.apis';
 import { DropDownItems, LogicalNames, formText, paneValues } from '../constants';
 import { copyWorkItemRequest, updateTreeDataRequest } from '../apis/data.save.apis';
 import { DownOutlined } from '@ant-design/icons';
@@ -11,6 +11,7 @@ import {sampleDBData} from '../samples/data.sample';
 import DropDownComponent from './DropDownComponent';
 import { items } from '../constants/items';
 import { openSidePane } from '../utils/pane.open.utils';
+import { languageConstantsForCountry } from "../constants/languageConstants";
 
 
 const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
@@ -35,12 +36,16 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     // treeData.flatMap((node: any) => node?.key?.toString())
   );
   const [currentLogicalName, setCurrentLogicalName] = useState<string>("");
-  const [noData, setNoData] = useState<string>("No Data Found");
-  const [copySuccess, setCopySuccess] = useState<string>("Record copied successfully");
-  const [copyFailed, setCopyFailed] = useState<string>("Record copied Failed");
-  const [errorText, setErrorText] = useState<string>("Error");
-  const [successText, setSuccessText] = useState<string>("Success");
-  const [failedToChangeSequence, setFailedToChangeSequence] = useState<string>("Failed to change sequence..!")
+  // const [noData, setNoData] = useState<string>("No Data Found");
+  // const [copySuccess, setCopySuccess] = useState<string>("Record copied successfully");
+  // const [copyFailed, setCopyFailed] = useState<string>("Record copied Failed");
+  // const [errorText, setErrorText] = useState<string>("Error");
+  // const [successText, setSuccessText] = useState<string>("Success");
+  // const [failedToChangeSequence, setFailedToChangeSequence] = useState<string>("Failed to change sequence..!");
+  const [languageConstants, setLanguageConstants] = useState<any>(
+    languageConstantsForCountry.en
+  );
+
   const [textObject, setTextObject] = useState<object>({
     saveErrorMessage: "",
     saveSuccessMessage: "",
@@ -58,52 +63,76 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   let parentValue: any = null;
   let parentValueDrop: any = null;
 
-  const loadResourceString = async () => {
+  // const loadResourceString = async () => {
 
-    const url = await window.parent.Xrm.Utility.getGlobalContext().getClientUrl();
-    const language = await window.parent.Xrm.Utility.getGlobalContext().userSettings.languageId;
-    console.log('language ====> ', language);
-    const webResourceUrl = `${url}/WebResources/gyde_localizedstrings.${language}.resx`;
+  //   const url = await window.parent.Xrm.Utility.getGlobalContext().getClientUrl();
+  //   const language = await window.parent.Xrm.Utility.getGlobalContext().userSettings.languageId;
+  //   console.log('language ====> ', language);
+  //   const webResourceUrl = `${url}/WebResources/gyde_localizedstrings.${language}.resx`;
 
+  //   try {
+  //     const response = await fetch(`${webResourceUrl}`);
+  //     const data = await response.text();
+  //     const filterKeys = ['noData', 'copySuccess', 'copyFailed', 'errorText', 'successText', "failedToChangeSequence"]; // Replace with the key you want to filter
+  //     filterKeys.map((filterKey: string, index: number) => {
+  //       const parser = new DOMParser();
+  //       // Parse the XML string
+  //       const xmlDoc = parser.parseFromString(data, "text/xml");
+  //       // Find the specific data element with the given key
+  //       const dataNode: any = xmlDoc.querySelector(`data[name="${filterKey}"]`);
+  //       // Extract the value from the data element
+  //       const value: any = dataNode?.querySelector("value").textContent;
+
+  //       if (index === 0 && value) {
+  //         setNoData(value)
+  //       }
+  //       if (index === 1 && value) {
+  //         setCopySuccess(value)
+  //       }
+  //       if (index === 2 && value) {
+  //         setCopyFailed(value)
+  //       }
+  //       if (index === 3 && value) {
+  //         setErrorText(value)
+  //       }
+  //       if (index === 4 && value) {
+  //         setSuccessText(value)
+  //       }
+  //       if (index === 5 && value) {
+  //         setFailedToChangeSequence(value)
+  //       }
+  //       console.log('data ====> ',  index, value);
+  //     });
+  //     // this.setState({ data });
+  //   } catch (error) {
+  //     console.error('Error loading data:', error);
+  //   }
+  // }
+
+  
+  const messageHandler = async () => {
     try {
-      const response = await fetch(`${webResourceUrl}`);
-      const data = await response.text();
-      const filterKeys = ['noData', 'copySuccess', 'copyFailed', 'errorText', 'successText', "failedToChangeSequence"]; // Replace with the key you want to filter
-      filterKeys.map((filterKey: string, index: number) => {
-        const parser = new DOMParser();
-        // Parse the XML string
-        const xmlDoc = parser.parseFromString(data, "text/xml");
-        // Find the specific data element with the given key
-        const dataNode: any = xmlDoc.querySelector(`data[name="${filterKey}"]`);
-        // Extract the value from the data element
-        const value: any = dataNode?.querySelector("value").textContent;
-
-        if (index === 0 && value) {
-          setNoData(value)
+      const languageConstantsFromResourceTable = await loadResourceString();
+      if (languageConstantsFromResourceTable?.data && languageConstants?.length) {
+        console.log("languageConstantsFromResTable 2", languageConstantsFromResourceTable);
+        const refactorResourceTable = languageConstantsFromResourceTable?.data.reduce((result: any, currentObject: any) => {
+          return Object.assign(result, currentObject);
+        }, {});
+        if (Object.keys(refactorResourceTable).length) {
+          const originalConstants = languageConstants[0];
+          const updatedValues = refactorResourceTable[0];
+          for (const key in updatedValues) {
+            if (key in updatedValues && key in originalConstants) {
+              originalConstants[key] = updatedValues[key];
+            }
+          }
+          setLanguageConstants(originalConstants);
         }
-        if (index === 1 && value) {
-          setCopySuccess(value)
-        }
-        if (index === 2 && value) {
-          setCopyFailed(value)
-        } 
-        if (index === 3 && value) {
-          setErrorText(value)
-        }
-        if (index === 4 && value) {
-          setSuccessText(value)
-        }
-        if (index === 5 && value) {
-          setFailedToChangeSequence(value)
-        }
-        console.log('data ====> ',  index, value); 
-      });
-      // this.setState({ data });
+      }
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.log('error ====>', error);
     }
   }
-
   const retriveTemplateHandler = async () => {
     try {
       const currentLocation = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
@@ -203,8 +232,8 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       parentValue = null;
       parentValueDrop = null;
       notification.error({
-        message: errorText,
-        description: failedToChangeSequence,
+        message: languageConstants?.WorkItemTree_WorkItemTreer_ErrorText,
+        description: languageConstants?.WorkItemTree_FailedToChangeSequence,
       });
     } else {
       // setTreeData([]);
@@ -224,6 +253,10 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     parentValueDrop = null;
   };
 
+  useEffect(() => {
+    console.log("languageConstants", languageConstants)
+  }, [languageConstants]);
+  
   const onRightClick = (info: { event: React.MouseEvent; node: any }) => {
     // info.event.preventDefault();
     setRightClickedRecord({ ...info.node });
@@ -288,7 +321,8 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     console.log('res data ===> ', response);
     setLoadedData(response)
     setTreeData(response?.workItems);
-    loadResourceString();
+    // loadResourceString();
+    messageHandler();
     setIsLoading(false);
     // setTreeData(res_one);
     // res_one.map((data: any) => {
@@ -342,7 +376,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       case "1": {
         // Copy functionality invoked...
         setDropdownVisible(false);
-        copyWorkItemRequest(rightClickedRecordDetails, retrieveWorkItemData, copySuccess, copyFailed, successText, errorText);
+        copyWorkItemRequest(rightClickedRecordDetails, retrieveWorkItemData, languageConstants?.WorkItemTree_CopySuccess, languageConstants?.WorkItemTreer_CopyFailed, languageConstants?.WorkItemTree_SuccessText, languageConstants?.WorkItemTreer_ErrorText);
         // openSidePane(loadedData.logicalName, rightClickedRecordDetails.key, rightClickedRecordDetails, true);
         setIsModalOpen(true);
         setCopiedRecord({ ...rightClickedRecordDetails });
@@ -485,7 +519,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
           
         ) : (
           <div>
-            <p>{noData}</p>
+            <p>{languageConstants?.WorkItemTree_NoData}</p>
           </div>
         )}
       </Spin>
