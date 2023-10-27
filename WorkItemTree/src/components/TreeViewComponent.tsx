@@ -252,10 +252,6 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     parentValue = null;
     parentValueDrop = null;
   };
-
-  useEffect(() => {
-    console.log("languageConstants", languageConstants)
-  }, [languageConstants]);
   
   const onRightClick = (info: { event: React.MouseEvent; node: any }) => {
     // info.event.preventDefault();
