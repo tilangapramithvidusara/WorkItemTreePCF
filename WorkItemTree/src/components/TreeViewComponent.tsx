@@ -413,7 +413,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       ) {
         setTimeout(() => {
           retrieveWorkItemData(false);
-        }, 1000)
+        }, 3000)
         // retrieveWorkItemData(false);
       } else {
         rightClickRef.current = null;
