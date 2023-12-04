@@ -14,6 +14,12 @@ import { openSidePane } from '../utils/pane.open.utils';
 import { languageConstantsForCountry } from "../constants/languageConstants";
 
 
+
+declare global {
+  interface Window {
+    Xrm: any;
+  }
+}
 const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const {DirectoryTree} = Tree;
   const dropdownRef = useRef<any>(null);
@@ -36,6 +42,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     // treeData.flatMap((node: any) => node?.key?.toString())
   );
   const [currentLogicalName, setCurrentLogicalName] = useState<string>("");
+  const [currentTabExpand,setCurrentTabExpand] =useState<boolean>(false);
   // const [noData, setNoData] = useState<string>("No Data Found");
   // const [copySuccess, setCopySuccess] = useState<string>("Record copied successfully");
   // const [copyFailed, setCopyFailed] = useState<string>("Record copied Failed");
@@ -108,7 +115,25 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   //     console.error('Error loading data:', error);
   //   }
   // }
+ useEffect(()=> {
+  console.log("UserEffectTrigger");
+  
+  getCurrentTab();
+ },[])
+  const getCurrentTab = ()=> {
+    let currentTab;
+    window?.parent?.Xrm.Page.ui.formContext.ui.tabs.get().forEach((tab:any)=>{
+      console.log("tab Current",tab)
+  console.log(tab?.getDisplayState())
+     if (tab.getDisplayState() === "expanded" && tab?._controlName === "reuseWI") {
+         currentTab = tab.getLabel()
+         setCurrentTabExpand(true)
+     }
 
+  })
+  }
+
+  
   
   const messageHandler = async () => {
     try {
@@ -333,7 +358,9 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   }, []);
 
   const onCheck = (checkedKeys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }, info: any) => {
-    setCheckedKeys(Array.isArray(checkedKeys) ? checkedKeys : checkedKeys.checked);
+    console.log("check",info, "info?.checkedNodes",info?.checkedNodes ,"checkedKeys",checkedKeys);
+    
+    // setCheckedKeys(Array.isArray(checkedKeys) ? checkedKeys : checkedKeys.checked);
   };
 
   const hideDropDown = () => {    
@@ -472,9 +499,10 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
               
                 <DirectoryTree
                   className="draggable-tree"
-                  // checkable
+                   checkable = {currentTabExpand ? true:false}
+                   checkStrictly={true}
                   // checkedKeys={checkedKeys}
-                  // onCheck={onCheck}
+                  onCheck={onCheck}
                   // defaultExpandedKeys={expandedKeys}
                   expandedKeys={expandedKeys}
                   draggable={!isDisable}
