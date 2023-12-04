@@ -1,4 +1,4 @@
-import {Spin, notification } from 'antd';
+import {Button, Spin, notification } from 'antd';
 import Tree, { TreeProps } from "antd/es/tree";
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import TitileViewComponent from './TitileViewComponent';
@@ -12,6 +12,8 @@ import DropDownComponent from './DropDownComponent';
 import { items } from '../constants/items';
 import { openSidePane } from '../utils/pane.open.utils';
 import { languageConstantsForCountry } from "../constants/languageConstants";
+import AddToWITemp from './AddToWITemp';
+import { getAllWorkItemList } from '../apis/reuseWiApis.apis';
 
 
 
@@ -37,6 +39,9 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const [type, setType] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteLoader, setDeleteLoader] = useState<boolean>(false);
+  const [openAddToWiTempForm, setOpenAddToWiTempForm] = useState<boolean>(false);
+  const [isWITempModalOpen, setIsWITempModalOpen] = useState(false);
+  const [workItemTemplateList, setWorkItemTemplateList] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(
     []
     // treeData.flatMap((node: any) => node?.key?.toString())
@@ -118,7 +123,8 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
  useEffect(()=> {
   console.log("UserEffectTrigger");
   
-  getCurrentTab();
+   getCurrentTab();
+   _getAllWorkItemList();
  },[])
   const getCurrentTab = ()=> {
     let currentTab;
@@ -457,6 +463,14 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     };
   }, []);
 
+  const _getAllWorkItemList = async () => {
+    const allWiList: any = await getAllWorkItemList();
+    console.log("ALLLLLL", allWiList);
+
+    if(allWiList?.data?.length)
+      setWorkItemTemplateList(allWiList?.data);
+  }
+
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === 'Shift') {
@@ -477,8 +491,13 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     };
+
+      
   }, []);
 
+  const handleAddToWorkItemTemplatePopup = () => {
+
+  }
   return (
     <div className="custom-container tree-container" id="custom-container" ref={dropdownRef}>
       <Spin spinning={isLoading}>
@@ -539,6 +558,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
               </div>
               )}
             </div>
+            
           </div>
           
         ) : (
@@ -547,6 +567,19 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
           </div>
         )}
       </Spin>
+      <div style={{textAlign: "right"}}>
+                <Button type="primary" onClick={() => setIsWITempModalOpen(true)}>Add To Work Item Template</Button>
+      </div>
+      {
+        isWITempModalOpen ?
+          <AddToWITemp
+            setIsWITempModalOpen={setIsWITempModalOpen}
+            isWITempModalOpen={isWITempModalOpen}
+            workItemTemplateList={workItemTemplateList}
+          /> :
+          <>
+          </>
+      }
     </div>
   )
 }
