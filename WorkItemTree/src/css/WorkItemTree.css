@@ -94,3 +94,27 @@
   width: 12px;
   margin-right: 5px;
 }
+
+.wi-template-div-btn {
+   display: flex;
+   margin-top: 10px;
+   margin-left: 266px;
+}
+
+.wi-template-save-btn { 
+  margin-left: 5px;
+width: 71px;
+height: 35px;
+padding: 10px, 20px, 10px, 20px;
+border-radius: 5px;
+gap: 10px
+
+}
+.wi-template-csl-btn { 
+  width: 83px;
+height: 35px;
+padding: 10px, 20px, 10px, 20px;
+border-radius: 5px;
+border: 1px;
+gap: 10px;
+  }

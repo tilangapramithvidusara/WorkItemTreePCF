@@ -69,7 +69,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const currentSurveyTemplate = useRef(null)
   const currentInternalId = useRef(null)
   const currentWorkItemTemplateId = useRef(null);
-
+  const [workItemTreeList, setWorkItemTreeList] = useState<any>([]);
   const [currentState, setCurrentState] = useState<boolean>(false);
 
   let parentValue: any = null;
@@ -365,7 +365,46 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
 
   const onCheck = (checkedKeys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }, info: any) => {
     console.log("check",info, "info?.checkedNodes",info?.checkedNodes ,"checkedKeys",checkedKeys);
+    const filterNodesByCheckedKeys = (node :any, checkedKeys :any, filterFunction :any) => {
+      const isNodeIncluded = filterFunction(node, checkedKeys);
     
+      console.log("treeData",isNodeIncluded,node);
+      const filteredChildren = node.children?.map((child :any) => filterNodesByCheckedKeys(child, checkedKeys, filterFunction)).filter(Boolean);
+      console.log("filteredChildren",filteredChildren,node);
+      
+      if (isNodeIncluded) {
+        const { workItemtype,description,title,parentSequanceId,relatedtocurrentItem,disableExpand,hasParent,icon,key,...nodeObj } = node;
+
+          return {
+              ...nodeObj ,
+              workItemtypedetails: node?.workItemtype, //
+              description:description ? description : "",
+              parentSequanceId:parentSequanceId ? parentSequanceId : "",
+              title:title ? title : '',
+              icon:icon ? icon : '',
+              key:key ? key : '',
+              relatedtocurrentItem:relatedtocurrentItem ? relatedtocurrentItem : false,
+              disableExpand:disableExpand ? disableExpand : false,
+              hasParent:hasParent ? hasParent : false,
+              children: filteredChildren?.length  ?  filteredChildren.flat() : [],
+          };
+      }else if(!isNodeIncluded &&filteredChildren?.length ){
+          console.log("else ",filteredChildren);
+          return filteredChildren
+      }
+          
+      return null;
+    };
+      const genericFilterFunction = (node :any , checkedKeys :any) => checkedKeys.includes(node.key);
+    
+      let checkedKeysNode :any =checkedKeys;
+      const checkedKeysResult = checkedKeysNode?.checked;
+      const filteredArray = treeData
+          ?.map((item) => filterNodesByCheckedKeys(item, checkedKeysResult, genericFilterFunction))
+          .filter(Boolean);
+      
+      console.log("filteredTree*", filteredArray.flat(Infinity));
+    setWorkItemTreeList(filteredArray.flat(Infinity))
     // setCheckedKeys(Array.isArray(checkedKeys) ? checkedKeys : checkedKeys.checked);
   };
 
@@ -567,15 +606,16 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
           </div>
         )}
       </Spin>
-      <div style={{textAlign: "right"}}>
+   { currentTabExpand && <div style={{textAlign: "right"}}>
                 <Button type="primary" onClick={() => setIsWITempModalOpen(true)}>Add To Work Item Template</Button>
-      </div>
+      </div> }   
       {
         isWITempModalOpen ?
           <AddToWITemp
             setIsWITempModalOpen={setIsWITempModalOpen}
             isWITempModalOpen={isWITempModalOpen}
             workItemTemplateList={workItemTemplateList}
+            workItemTreeList={workItemTreeList}
           /> :
           <>
           </>

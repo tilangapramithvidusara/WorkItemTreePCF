@@ -1,5 +1,5 @@
 
-
+import axios from "axios";
 export const getAllWorkItemList = async () : Promise<any> =>  {
   const record: any = {};
   try {
@@ -32,6 +32,20 @@ export const getSurveyListByWorkItemId = async (workitemId: any) : Promise<any> 
     }
 }
 
+export const getTemplatebyType = async (workItemId: any,templateType:any) : Promise<any> => {
+    try {
+        let _templateType =templateType === 'chapter' ? 'gyde_surveytemplatechapter' :templateType === 'section' ? 'gyde_surveytemplatechaptersection' :templateType === 'question' ? 'gyde_surveytemplatechaptersectionquestion' : '';
+        console.log("_templateType*1",_templateType,"templateTypes",templateType);
+        
+        const templateTypeList = await window.parent.Xrm.WebApi.retrieveMultipleRecords(`${_templateType}`, `?$filter=_gyde_surveytemplate_value eq ${workItemId}`);
+        console.log("templateTypeList", templateTypeList);
+        return { error: false, data: templateTypeList?.entities };
+    } catch (e) {
+        return { error: true, data: null };
+    }
+}
+
+
 export const releatedSurveyItemLookup = async (workItemSequenceId: any) : Promise<any> => {
     var fetchXml = `?fetchXml=
    <fetch top='5000' aggregate='true'>
@@ -54,3 +68,17 @@ export const releatedSurveyItemLookup = async (workItemSequenceId: any) : Promis
         return { error: true, data: null };
     }
 }
+
+
+export const migrateWotkItemdata = async (payload :any) : Promise<any> =>  {
+    const record: any = {};
+    try {
+        const response = await axios.post(`https://designv2-fapp-uk-dv.azurewebsites.net/api/CreateReuseSurveyWorkItems?code=_BR5x731E95iLpKirDGcV2irua8GFoGUfGTzJTjp2jgzAzFupbJkUg==`,payload);
+        console.log('Parent node saved:', response);
+        console.log("workItem Migrated", response)
+      return { error: false, data: response };
+    } catch (error) {
+      return { error: true, data: null };
+    }
+  }
+  

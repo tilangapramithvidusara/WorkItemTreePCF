@@ -6,13 +6,16 @@ import {
   Input,
   MenuProps,
   Modal,
+  notification,
   Select,
   Spin,
 } from "antd";
 import React, { memo, useEffect, useState } from "react";
 import {
   getSurveyListByWorkItemId,
+  getTemplatebyType,
   getWorkItemsListByWorkItemTemplateId,
+  migrateWotkItemdata,
 } from "../apis/reuseWiApis.apis";
 
 const { Option } = Select;
@@ -26,6 +29,7 @@ const AddToWITemp = ({
   setIsWITempModalOpen,
   isWITempModalOpen,
   workItemTemplateList,
+  workItemTreeList,
 }: any) => {
   const [form] = Form.useForm();
   const [workItemList, setWorkItemList] = useState([]);
@@ -33,16 +37,64 @@ const AddToWITemp = ({
   const [partnerNodes, setPartnetNodes] = useState(false);
 
   const [loadedApiData, setLoadedApiData] = useState(false);
+  const [workitemTemplate, setWorkitemTemplate] = useState("");
+  const [surveyTemplate, setSurveyTemplate] = useState("");
+  const [parentSurveyWorkItem, setParentSurveyWorkItem] = useState("");
+  const [surveyTemplateItemType, setSurveyTemplateItemType] = useState("");
+  const [onLookupItem, setOnLookupItem] = useState("");
+  const [templateBytype, setTemplateBytype] = useState([]);
 
   const onLookupChange = (value: string) => {
+    setOnLookupItem(value);
     console.log("ONLOOKUP");
   };
 
   const onFinish = (values: any) => {
     console.log(values);
   };
+  // const customDescription = (
+  //   <div>
+  //     Survey work items are being updated in the background. An async process will run where the Survey Work Items selected will be associated to the new work item template through the work item template sequence entity. This means that new Work Item template sequence records will be created joining the work item template specified to the survey work items selected and new relationships will be created off the survey work item record to the Chapter, Section or Question specified.
+  //     <br />
+  //     <br />
+  //     <span style={{ color: 'blue', fontWeight: 'bold' }}>Go to workitem template</span>
+  //   </div>
+  // );
+  const handleSaveWorkItem = () => {
+    try {
+      var userSettings =
+        window.parent.Xrm.Utility.getGlobalContext().userSettings;
 
-  const handleOk = () => {};
+      var currentuserid = userSettings.userId;
+      let inputString = currentuserid;
+      let userid = inputString.replace(/[{}]/g, "");
+
+      console.log(userid);
+
+      if(workItemTreeList?.length){
+        const payload = {
+          userId: userid,
+          workItemteplateId: workitemTemplate,
+          surveyTemplateId: surveyTemplate,
+          parentSurveyWorkItemId: parentSurveyWorkItem,
+          surveyTemplateItemType: surveyTemplateItemType,
+          relatedSurveyItemLookup: onLookupItem,
+          copyPartnerNotes: partnerNodes,
+          data: workItemTreeList,
+        };
+        console.log("payload", payload);
+  
+        migrateWotkItemdata(payload);
+        //  notification.success({ message:'Survey work items updating is in progress',description:customDescription})
+        setIsWITempModalOpen(false);
+      }else{
+        notification.error({ message:'Select the work item'})
+      }
+     
+    } catch (e) {
+      console.log("err", e);
+    }
+  };
 
   const handleCancel = () => {
     setIsWITempModalOpen(false);
@@ -50,11 +102,13 @@ const AddToWITemp = ({
 
   const onWorkItemTemplateChange = async (input: any) => {
     console.log("On Selected WI", input);
+
     setLoadedApiData(false);
     try {
-        await getSurveyTemplateListByWorkItemId(input);
-        await _getSurveyListByWorkItemId(input);
-        setLoadedApiData(true);
+      await getSurveyTemplateListByWorkItemId(input);
+      await _getSurveyListByWorkItemId(input);
+      setLoadedApiData(true);
+      setWorkitemTemplate(input);
     } catch (error) {
       console.error("Error fetching data", error);
     }
@@ -62,8 +116,8 @@ const AddToWITemp = ({
 
   const _getSurveyListByWorkItemId = async (workItemId: any) => {
     try {
-        const surveyList = await getSurveyListByWorkItemId(workItemId);
-        if(!surveyList?.error) setSurveylist(surveyList?.data);      
+      const surveyList = await getSurveyListByWorkItemId(workItemId);
+      if (!surveyList?.error) setSurveylist(surveyList?.data);
     } catch (error) {
       console.error("Error fetching survey templates", error);
     }
@@ -74,30 +128,46 @@ const AddToWITemp = ({
       const getSurveyTemplateList = await getWorkItemsListByWorkItemTemplateId(
         workItemId
       );
-        if(!getSurveyTemplateList?.error) setWorkItemList(getSurveyTemplateList?.data);
+      if (!getSurveyTemplateList?.error)
+        setWorkItemList(getSurveyTemplateList?.data);
     } catch (error) {
       console.error("Error fetching survey templates", error);
     }
   };
 
   const onSurveyTemplateChange = async (selectedTemplate: any) => {
+    setSurveyTemplate(selectedTemplate);
     console.log("selectedTemplate", selectedTemplate);
     // await getSurveyListByWorkItemId(selectedTemplate)
   };
 
   const onParentSurveyWIChange = (parentWI: any) => {
+    setParentSurveyWorkItem(parentWI);
     console.log("onParentSurveyWIChange", parentWI);
   };
 
-  const onSurveyTemplateTypeChange = (surveyTempType: any) => {
-    console.log("onSurveyTemplateTypeChange", surveyTempType);
+  const onSurveyTemplateTypeChange = async (surveyTempType: any) => {
+    try {
+      setSurveyTemplateItemType(surveyTempType);
+      const workItemTemplateByType = await getTemplatebyType(
+        surveyTemplate,
+        surveyTempType
+      );
+      console.log("workItemTemplateByType", workItemTemplateByType);
+      if (!workItemTemplateByType?.error)
+        setTemplateBytype(workItemTemplateByType?.data);
+      console.log("onSurveyTemplateTypeChange", surveyTempType);
+    } catch (error) {
+      console.error("Error fetching survey templates types", error);
+    }
   };
   return (
     <div>
       <Modal
         title="Add To Work Item Template"
         open={isWITempModalOpen}
-        onOk={handleOk}
+        // onOk={handleOk}
+        footer={null}
         onCancel={handleCancel}
       >
         <Form
@@ -139,6 +209,7 @@ const AddToWITemp = ({
               placeholder="Select Template"
               onChange={onSurveyTemplateChange}
               style={{ width: "250px" }}
+              disabled={workitemTemplate ? false : true}
               allowClear
             >
               {loadedApiData ? (
@@ -167,6 +238,7 @@ const AddToWITemp = ({
               placeholder="Select Item"
               onChange={onParentSurveyWIChange}
               style={{ width: "250px" }}
+              disabled={workitemTemplate ? false : true}
               allowClear
             >
               {loadedApiData ? (
@@ -194,6 +266,7 @@ const AddToWITemp = ({
             <Select
               placeholder="Select Type"
               onChange={onSurveyTemplateTypeChange}
+              disabled={workitemTemplate && surveyTemplate ? false : true}
               allowClear
               style={{ width: "250px" }}
             >
@@ -212,20 +285,53 @@ const AddToWITemp = ({
               placeholder="Select Item"
               onChange={onLookupChange}
               style={{ width: "250px" }}
+              disabled={surveyTemplate && surveyTemplateItemType ? false : true}
               allowClear
             >
-              {/* <Option value="male">male</Option>
-              <Option value="female">female</Option>
-              <Option value="other">other</Option> */}
+              {templateBytype &&
+                templateBytype?.map((workItemList: any) => {
+                  return (
+                    <Option
+                      value={
+                        surveyTemplateItemType === "chapter"
+                          ? workItemList?.gyde_surveytemplatechapterid
+                          : surveyTemplateItemType === "section"
+                          ? workItemList?.gyde_surveytemplatechaptersectionid
+                          : surveyTemplateItemType === "question"
+                          ? workItemList?.gyde_surveytemplatechaptersectionquestionid
+                          : ""
+                      }
+                    >
+                      {workItemList?.gyde_name}
+                    </Option>
+                  );
+                })}
             </Select>
           </Form.Item>
 
           <div>
             <Checkbox onChange={(e) => setPartnetNodes(e?.target?.checked)}>
-              Copy partner notes
+              Copy Partner Notes
             </Checkbox>
           </div>
         </Form>
+        <div className="wi-template-div-btn">
+          <Button
+            className="wi-template-csl-btn"
+            type="primary"
+            ghost
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="primary"
+            className="wi-template-save-btn"
+            onClick={handleSaveWorkItem}
+          >
+            Save
+          </Button>
+        </div>
         <div></div>
       </Modal>
     </div>
