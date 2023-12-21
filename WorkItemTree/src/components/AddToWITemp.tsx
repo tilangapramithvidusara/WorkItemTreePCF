@@ -30,6 +30,7 @@ const AddToWITemp = ({
   isWITempModalOpen,
   workItemTemplateList,
   workItemTreeList,
+  reUseazUrl
 }: any) => {
   const [form] = Form.useForm();
   const [workItemList, setWorkItemList] = useState([]);
@@ -84,7 +85,7 @@ const AddToWITemp = ({
         };
         console.log("payload", payload);
   
-        migrateWotkItemdata(payload);
+        migrateWotkItemdata(reUseazUrl,payload);
         //  notification.success({ message:'Survey work items updating is in progress',description:customDescription})
         setIsWITempModalOpen(false);
       }else{

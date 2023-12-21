@@ -122,11 +122,23 @@ export const loadResourceString = async () : Promise<any> => {
   const url = await window.parent.Xrm.Utility.getGlobalContext().getClientUrl();
   const language = await window.parent.Xrm.Utility.getGlobalContext().userSettings.languageId
   const webResourceUrl = `${url}/WebResources/gyde_localizedstrings.${language}.resx`;
+  const envUrl = `${url}/WebResources/gyde_surveybukactionsettings.json`;
   const languageKeyValueMapper: any = [];
 
   try {
     const response = await fetch(`${webResourceUrl}`);
     const data = await response.text();
+
+    const envResponse = await fetch(`${envUrl}`);
+    const envData :any= await envResponse.text();
+    console.log("envData",typeof envData);
+    const jsonData = JSON.parse(envData);
+    console.log("jsonDataEnv",jsonData);
+    const createReuseSurveyWorkItemsUrl = jsonData["WorkItem/CreateReuseSurveyWorkItems"];
+
+    // Log the URL to the console
+    console.log("createReuseSurveyWorkItemsUrl",createReuseSurveyWorkItemsUrl);
+    console.log("envData*", envData);
     console.log("Filter Keys", filterKeys);
     filterKeys?.map((filterKey: string, index: number) => {
       const parser = new DOMParser();
@@ -143,7 +155,7 @@ export const loadResourceString = async () : Promise<any> => {
     });
     
     return {
-      error: false, data: languageKeyValueMapper
+      error: false, data: languageKeyValueMapper,reUseUrl:createReuseSurveyWorkItemsUrl
     }
   } catch (e) {
     console.log("Language Translation Error", e);

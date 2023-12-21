@@ -70,10 +70,12 @@ export const releatedSurveyItemLookup = async (workItemSequenceId: any) : Promis
 }
 
 
-export const migrateWotkItemdata = async (payload :any) : Promise<any> =>  {
+export const migrateWotkItemdata = async (url:any,payload :any) : Promise<any> =>  {
     const record: any = {};
+    console.log("urlRews",url);
+    
     try {
-        const response = await axios.post(`https://designv2-fapp-uk-dv.azurewebsites.net/api/CreateReuseSurveyWorkItems?code=_BR5x731E95iLpKirDGcV2irua8GFoGUfGTzJTjp2jgzAzFupbJkUg==`,payload);
+        const response = await axios.post(url,payload);
         console.log('Parent node saved:', response);
         console.log("workItem Migrated", response)
       return { error: false, data: response };

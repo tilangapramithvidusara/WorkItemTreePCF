@@ -74,6 +74,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
 
   let parentValue: any = null;
   let parentValueDrop: any = null;
+  const [reuseAzureUrl, setReuseAzureUrl] = useState();
 
   // const loadResourceString = async () => {
 
@@ -139,11 +140,17 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   })
   }
 
-  
+  useEffect(()=> {
+console.log("reuseAzureUrl",reuseAzureUrl);
+
+  },[reuseAzureUrl])
   
   const messageHandler = async () => {
     try {
       const languageConstantsFromResourceTable = await loadResourceString();
+      console.log("languageConstantsFromResourceTable",languageConstantsFromResourceTable);
+      
+      setReuseAzureUrl(languageConstantsFromResourceTable?.reUseUrl)
       if (languageConstantsFromResourceTable?.data && languageConstants?.length) {
         console.log("languageConstantsFromResTable 2", languageConstantsFromResourceTable);
         const refactorResourceTable = languageConstantsFromResourceTable?.data.reduce((result: any, currentObject: any) => {
@@ -616,6 +623,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
             isWITempModalOpen={isWITempModalOpen}
             workItemTemplateList={workItemTemplateList}
             workItemTreeList={workItemTreeList}
+            reUseazUrl = { reuseAzureUrl}
           /> :
           <>
           </>
