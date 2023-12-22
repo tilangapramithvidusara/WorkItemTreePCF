@@ -393,7 +393,7 @@ console.log("reuseAzureUrl",reuseAzureUrl);
               relatedtocurrentItem:relatedtocurrentItem ? relatedtocurrentItem : false,
               disableExpand:disableExpand ? disableExpand : false,
               hasParent:hasParent ? hasParent : false,
-              children: filteredChildren?.length  ?  filteredChildren.flat() : [],
+              children: filteredChildren?.length  ?  filteredChildren.flat(Infinity) : [],
           };
       }else if(!isNodeIncluded &&filteredChildren?.length ){
           console.log("else ",filteredChildren);
