@@ -106,6 +106,10 @@ const AddToWITemp = ({
 
     setLoadedApiData(false);
     try {
+      form.resetFields(['Survey Template']);
+      form.resetFields(['Related Survey Item Lookup']);
+      form.resetFields(['Survey Template Item Type']);
+      form.resetFields(['Parent Survey Work Item']);
       await getSurveyTemplateListByWorkItemId(input);
       await _getSurveyListByWorkItemId(input);
       setLoadedApiData(true);
@@ -138,6 +142,7 @@ const AddToWITemp = ({
 
   const onSurveyTemplateChange = async (selectedTemplate: any) => {
     setSurveyTemplate(selectedTemplate);
+    form.resetFields(['Related Survey Item Lookup']);
     console.log("selectedTemplate", selectedTemplate);
     // await getSurveyListByWorkItemId(selectedTemplate)
   };
@@ -150,6 +155,7 @@ const AddToWITemp = ({
   const onSurveyTemplateTypeChange = async (surveyTempType: any) => {
     try {
       setSurveyTemplateItemType(surveyTempType);
+      form.resetFields(['Related Survey Item Lookup']);
       const workItemTemplateByType = await getTemplatebyType(
         surveyTemplate,
         surveyTempType
@@ -188,7 +194,6 @@ const AddToWITemp = ({
               placeholder="Select Template"
               onChange={onWorkItemTemplateChange}
               style={{ width: "250px" }}
-              allowClear
             >
               {workItemTemplateList &&
                 workItemTemplateList?.map((workItemList: any) => {
@@ -211,7 +216,7 @@ const AddToWITemp = ({
               onChange={onSurveyTemplateChange}
               style={{ width: "250px" }}
               disabled={workitemTemplate ? false : true}
-              allowClear
+              
             >
               {loadedApiData ? (
                 <>
@@ -240,7 +245,7 @@ const AddToWITemp = ({
               onChange={onParentSurveyWIChange}
               style={{ width: "250px" }}
               disabled={workitemTemplate ? false : true}
-              allowClear
+              
             >
               {loadedApiData ? (
                 <>
@@ -268,7 +273,6 @@ const AddToWITemp = ({
               placeholder="Select Type"
               onChange={onSurveyTemplateTypeChange}
               disabled={workitemTemplate && surveyTemplate ? false : true}
-              allowClear
               style={{ width: "250px" }}
             >
               <Option value="chapter">Chapter</Option>
@@ -287,7 +291,7 @@ const AddToWITemp = ({
               onChange={onLookupChange}
               style={{ width: "250px" }}
               disabled={surveyTemplate && surveyTemplateItemType ? false : true}
-              allowClear
+              
             >
               {templateBytype &&
                 templateBytype?.map((workItemList: any) => {
@@ -329,6 +333,7 @@ const AddToWITemp = ({
             type="primary"
             className="wi-template-save-btn"
             onClick={handleSaveWorkItem}
+            disabled= {workitemTemplate && surveyTemplate && onLookupItem ? false : true}
           >
             Save
           </Button>

@@ -614,7 +614,7 @@ console.log("reuseAzureUrl",reuseAzureUrl);
         )}
       </Spin>
    { currentTabExpand && <div style={{textAlign: "right"}}>
-                <Button type="primary" onClick={() => setIsWITempModalOpen(true)}>Add To Work Item Template</Button>
+                <Button type="primary" disabled={workItemTreeList?.length ? false : true} onClick={() => setIsWITempModalOpen(true)}>Add To Work Item Template</Button>
       </div> }   
       {
         isWITempModalOpen ?
