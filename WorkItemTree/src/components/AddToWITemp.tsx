@@ -110,6 +110,8 @@ const AddToWITemp = ({
       form.resetFields(['Related Survey Item Lookup']);
       form.resetFields(['Survey Template Item Type']);
       form.resetFields(['Parent Survey Work Item']);
+      setSurveyTemplate('')
+      setOnLookupItem('')
       await getSurveyTemplateListByWorkItemId(input);
       await _getSurveyListByWorkItemId(input);
       setLoadedApiData(true);
@@ -143,6 +145,7 @@ const AddToWITemp = ({
   const onSurveyTemplateChange = async (selectedTemplate: any) => {
     setSurveyTemplate(selectedTemplate);
     form.resetFields(['Related Survey Item Lookup']);
+      setOnLookupItem('')
     console.log("selectedTemplate", selectedTemplate);
     // await getSurveyListByWorkItemId(selectedTemplate)
   };
