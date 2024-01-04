@@ -513,8 +513,15 @@ console.log("reuseAzureUrl",reuseAzureUrl);
     const allWiList: any = await getAllWorkItemList();
     console.log("ALLLLLL", allWiList);
 
-    if(allWiList?.data?.length)
-      setWorkItemTemplateList(allWiList?.data);
+    if(allWiList?.data?.length) {
+      let _filterDraft =  allWiList?.data?.filter((wI:any)=> {
+     return   wI['statuscode@OData.Community.Display.V1.FormattedValue'] !== "✅Published"
+      })
+      console.log("_filterDraft",_filterDraft);
+      
+      setWorkItemTemplateList(_filterDraft);
+    }
+     
   }
 
   useEffect(() => {
