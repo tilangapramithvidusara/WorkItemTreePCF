@@ -158,6 +158,7 @@ const AddToWITemp = ({
   const onSurveyTemplateTypeChange = async (surveyTempType: any) => {
     try {
       setSurveyTemplateItemType(surveyTempType);
+      setOnLookupItem('')
       form.resetFields(['Related Survey Item Lookup']);
       const workItemTemplateByType = await getTemplatebyType(
         surveyTemplate,

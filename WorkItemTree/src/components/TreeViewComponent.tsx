@@ -514,8 +514,13 @@ console.log("reuseAzureUrl",reuseAzureUrl);
     console.log("ALLLLLL", allWiList);
 
     if(allWiList?.data?.length) {
+      let currentWorkItemTemplate = window.parent.Xrm.Page.data.entity.getId()
+      .replace("{", "")
+      .replace("}", "")
+      console.log("currentWorkItemTemplate",currentWorkItemTemplate);
+      
       let _filterDraft =  allWiList?.data?.filter((wI:any)=> {
-     return   wI['statuscode@OData.Community.Display.V1.FormattedValue'] !== "✅Published"
+     return   wI['statuscode@OData.Community.Display.V1.FormattedValue'] !== "✅Published" && wI['gyde_workitemtemplateid'] !== currentWorkItemTemplate?.toLowerCase()
       })
       console.log("_filterDraft",_filterDraft);
       
