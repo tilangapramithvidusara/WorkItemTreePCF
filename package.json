@@ -11,7 +11,8 @@
     "rebuild": "pcf-scripts rebuild",
     "start": "pcf-scripts start",
     "refreshTypes": "pcf-scripts refreshTypes",
-    "t": "node ./tooling/translations.js"
+    "t": "node ./tooling/translations.js",
+    "release": "cd WorkItemTreeSolution && pac solution add-reference --path ../ && dotnet msbuild /t:restore && dotnet msbuild /p:configuration=Release"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",

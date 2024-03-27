@@ -9,6 +9,7 @@ import {
   notification,
   Select,
   Spin,
+  Switch,
 } from "antd";
 import React, { memo, useEffect, useState } from "react";
 import {
@@ -34,6 +35,7 @@ const AddToWITemp = ({
 }: any) => {
   const [form] = Form.useForm();
   const [workItemList, setWorkItemList] = useState([]);
+  const [subWorkItemList, setSubWorkItemList] = useState([]);
   const [surveyList, setSurveylist] = useState([]);
   const [partnerNodes, setPartnetNodes] = useState(false);
 
@@ -44,6 +46,13 @@ const AddToWITemp = ({
   const [surveyTemplateItemType, setSurveyTemplateItemType] = useState("");
   const [onLookupItem, setOnLookupItem] = useState("");
   const [templateBytype, setTemplateBytype] = useState([]);
+  const [sortAlphabetically, setSortAlphabetically] = useState(false);
+
+  const [doRequest, setDoRequest] = useState(false)
+
+  const handleChangeSort = (checked: boolean) => {
+    setSortAlphabetically(!sortAlphabetically);
+  };
 
   const onLookupChange = (value: string) => {
     setOnLookupItem(value);
@@ -126,7 +135,7 @@ const AddToWITemp = ({
       const surveyList = await getSurveyListByWorkItemId(workItemId);
       if (!surveyList?.error) setSurveylist(surveyList?.data);
     } catch (error) {
-      console.error("Error fetching survey templates", error);
+      console.error("Error fetching survey templates 1", error);
     }
   };
 
@@ -135,10 +144,14 @@ const AddToWITemp = ({
       const getSurveyTemplateList = await getWorkItemsListByWorkItemTemplateId(
         workItemId
       );
-      if (!getSurveyTemplateList?.error)
+      console.log('p ===> ', getSurveyTemplateList);
+      
+      if (!getSurveyTemplateList?.error) {
         setWorkItemList(getSurveyTemplateList?.data);
+        setSubWorkItemList(getSurveyTemplateList?.data);
+      }
     } catch (error) {
-      console.error("Error fetching survey templates", error);
+      console.error("Error fetching survey templates 2", error);
     }
   };
 
@@ -165,13 +178,43 @@ const AddToWITemp = ({
         surveyTempType
       );
       console.log("workItemTemplateByType", workItemTemplateByType);
-      if (!workItemTemplateByType?.error)
-        setTemplateBytype(workItemTemplateByType?.data);
+      if (!workItemTemplateByType?.error) {
+        let workItemListValues: any = workItemTemplateByType?.data;
+        const values = await workItemListValues.sort((a: {gyde_name: string}, b: {gyde_name: string}) => (a.gyde_name).localeCompare(b.gyde_name))
+        console.log("valuess -- ==> ", (workItemListValues[0] as any)?.gyde_name, (values[0]  as any)?.gyde_name);
+        setTemplateBytype(values);
+        // setTemplateBytype(workItemTemplateByType?.data);
+      }
+        
       console.log("onSurveyTemplateTypeChange", surveyTempType);
     } catch (error) {
       console.error("Error fetching survey templates types", error);
     }
   };
+
+  const sortingWIList = async(sortAlphabeticallySub: boolean, workItemListSub: any[]) => {
+    setLoadedApiData(false)
+    if (sortAlphabeticallySub) {
+      setDoRequest(true)
+      let workItemListValues: any = workItemListSub;
+      const values = await workItemListValues.sort((a: {gyde_name: string}, b: {gyde_name: string}) => (a.gyde_name).localeCompare(b.gyde_name))
+      console.log("d ==> ", (workItemListValues[0] as any)?.gyde_name, (values[0]  as any)?.gyde_name);
+      
+      setSubWorkItemList(values);
+    } else {
+      if (doRequest) {
+        await getSurveyTemplateListByWorkItemId(workitemTemplate);
+        setDoRequest(false)
+      }
+    }
+    setLoadedApiData(true)
+  }
+
+  useEffect(() => {
+    sortingWIList(sortAlphabetically, workItemList);
+  }, [sortAlphabetically, workItemList])
+  console.log('workItemList ==> ', subWorkItemList?.length > 0 ? (subWorkItemList[0] as any)?.gyde_name : '');
+  
   return (
     <div>
       <Modal
@@ -239,7 +282,7 @@ const AddToWITemp = ({
             </Select>
           </Form.Item>
 
-          <Form.Item
+          {/**<Form.Item
             name="Parent Survey Work Item"
             label="Parent Survey Work Item:"
             rules={[{ required: false }]}
@@ -265,6 +308,38 @@ const AddToWITemp = ({
               ) : (
                 <Spin />
               )}
+            </Select>
+              </Form.Item>*/}
+          <Form.Item
+            name="Parent Survey Work Item"
+            label="Parent Survey Work Item:"
+            rules={[{ required: false }]}
+          >
+            <span style={{ marginRight: '8px' }}>Original Order</span>
+            <Switch checked={sortAlphabetically} onChange={() => setSortAlphabetically(!sortAlphabetically)} />
+            <span style={{ marginLeft: '8px' }}>Sort Alphabetically</span>
+            <Select
+              placeholder="Select Item"
+              style={{ width: "250px" }}
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option: any) =>
+                option?.children?.toLowerCase()?.indexOf(input?.toLowerCase()) >= 0
+              }
+              disabled={workItemList?.length > 0 ? false : true}
+            >
+              {loadedApiData ? (<>
+                {(subWorkItemList?.length > 0) && (
+                  <>
+                    {subWorkItemList.map((survey: any) => (
+                      <Option key={survey?.gyde_workitemid} value={survey?.gyde_workitemid}>
+                        {survey?.gyde_name}
+                      </Option>
+                    ))}
+                  </>
+                )}
+              </>) : <Spin />}
+              
             </Select>
           </Form.Item>
 
