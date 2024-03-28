@@ -1,4 +1,4 @@
-import {Spin, notification } from 'antd';
+import {Button, Spin, notification } from 'antd';
 import Tree, { TreeProps } from "antd/es/tree";
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import TitileViewComponent from './TitileViewComponent';
@@ -12,8 +12,16 @@ import DropDownComponent from './DropDownComponent';
 import { items } from '../constants/items';
 import { openSidePane } from '../utils/pane.open.utils';
 import { languageConstantsForCountry } from "../constants/languageConstants";
+import AddToWITemp from './AddToWITemp';
+import { getAllWorkItemList } from '../apis/reuseWiApis.apis';
 
 
+
+declare global {
+  interface Window {
+    Xrm: any;
+  }
+}
 const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const {DirectoryTree} = Tree;
   const dropdownRef = useRef<any>(null);
@@ -31,11 +39,15 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const [type, setType] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteLoader, setDeleteLoader] = useState<boolean>(false);
+  const [openAddToWiTempForm, setOpenAddToWiTempForm] = useState<boolean>(false);
+  const [isWITempModalOpen, setIsWITempModalOpen] = useState(false);
+  const [workItemTemplateList, setWorkItemTemplateList] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(
     []
     // treeData.flatMap((node: any) => node?.key?.toString())
   );
   const [currentLogicalName, setCurrentLogicalName] = useState<string>("");
+  const [currentTabExpand,setCurrentTabExpand] =useState<boolean>(false);
   // const [noData, setNoData] = useState<string>("No Data Found");
   // const [copySuccess, setCopySuccess] = useState<string>("Record copied successfully");
   // const [copyFailed, setCopyFailed] = useState<string>("Record copied Failed");
@@ -57,11 +69,12 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   const currentSurveyTemplate = useRef(null)
   const currentInternalId = useRef(null)
   const currentWorkItemTemplateId = useRef(null);
-
+  const [workItemTreeList, setWorkItemTreeList] = useState<any>([]);
   const [currentState, setCurrentState] = useState<boolean>(false);
 
   let parentValue: any = null;
   let parentValueDrop: any = null;
+  const [reuseAzureUrl, setReuseAzureUrl] = useState();
 
   // const loadResourceString = async () => {
 
@@ -108,11 +121,36 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   //     console.error('Error loading data:', error);
   //   }
   // }
+ useEffect(()=> {
+  console.log("UserEffectTrigger");
+  
+   getCurrentTab();
+   _getAllWorkItemList();
+ },[])
+  const getCurrentTab = ()=> {
+    let currentTab;
+    window?.parent?.Xrm.Page.ui.formContext.ui.tabs.get().forEach((tab:any)=>{
+      console.log("tab Current",tab)
+  console.log(tab?.getDisplayState())
+     if (tab.getDisplayState() === "expanded" && tab?._controlName === "reuseWI") {
+         currentTab = tab.getLabel()
+         setCurrentTabExpand(true)
+     }
 
+  })
+  }
+
+  useEffect(()=> {
+console.log("reuseAzureUrl",reuseAzureUrl);
+
+  },[reuseAzureUrl])
   
   const messageHandler = async () => {
     try {
       const languageConstantsFromResourceTable = await loadResourceString();
+      console.log("languageConstantsFromResourceTable",languageConstantsFromResourceTable);
+      
+      setReuseAzureUrl(languageConstantsFromResourceTable?.reUseUrl)
       if (languageConstantsFromResourceTable?.data && languageConstants?.length) {
         console.log("languageConstantsFromResTable 2", languageConstantsFromResourceTable);
         const refactorResourceTable = languageConstantsFromResourceTable?.data.reduce((result: any, currentObject: any) => {
@@ -333,7 +371,48 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
   }, []);
 
   const onCheck = (checkedKeys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }, info: any) => {
-    setCheckedKeys(Array.isArray(checkedKeys) ? checkedKeys : checkedKeys.checked);
+    console.log("check",info, "info?.checkedNodes",info?.checkedNodes ,"checkedKeys",checkedKeys);
+    const filterNodesByCheckedKeys = (node :any, checkedKeys :any, filterFunction :any) => {
+      const isNodeIncluded = filterFunction(node, checkedKeys);
+    
+      console.log("treeData",isNodeIncluded,node);
+      const filteredChildren = node.children?.map((child :any) => filterNodesByCheckedKeys(child, checkedKeys, filterFunction)).filter(Boolean);
+      console.log("filteredChildren",filteredChildren,node);
+      
+      if (isNodeIncluded) {
+        const { workItemtype,description,title,parentSequanceId,relatedtocurrentItem,disableExpand,hasParent,icon,key,...nodeObj } = node;
+
+          return {
+              ...nodeObj ,
+              workItemtypedetails: node?.workItemtype, //
+              description:description ? description : "",
+              parentSequanceId:parentSequanceId ? parentSequanceId : "",
+              title:title ? title : '',
+              icon:icon ? icon : '',
+              key:key ? key : '',
+              relatedtocurrentItem:relatedtocurrentItem ? relatedtocurrentItem : false,
+              disableExpand:disableExpand ? disableExpand : false,
+              hasParent:hasParent ? hasParent : false,
+              children: filteredChildren?.length  ?  filteredChildren.flat(Infinity) : [],
+          };
+      }else if(!isNodeIncluded &&filteredChildren?.length ){
+          console.log("else ",filteredChildren);
+          return filteredChildren
+      }
+          
+      return null;
+    };
+      const genericFilterFunction = (node :any , checkedKeys :any) => checkedKeys.includes(node.key);
+    
+      let checkedKeysNode :any =checkedKeys;
+      const checkedKeysResult = checkedKeysNode?.checked;
+      const filteredArray = treeData
+          ?.map((item) => filterNodesByCheckedKeys(item, checkedKeysResult, genericFilterFunction))
+          .filter(Boolean);
+      
+      console.log("filteredTree*", filteredArray.flat(Infinity));
+    setWorkItemTreeList(filteredArray.flat(Infinity))
+    // setCheckedKeys(Array.isArray(checkedKeys) ? checkedKeys : checkedKeys.checked);
   };
 
   const hideDropDown = () => {    
@@ -430,6 +509,26 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
     };
   }, []);
 
+  const _getAllWorkItemList = async () => {
+    const allWiList: any = await getAllWorkItemList();
+    console.log("ALLLLLL", allWiList);
+
+    if(allWiList?.data?.length) {
+      let currentWorkItemTemplate = window.parent.Xrm.Page.data.entity.getId()
+      .replace("{", "")
+      .replace("}", "")
+      console.log("currentWorkItemTemplate",currentWorkItemTemplate);
+      
+      let _filterDraft =  allWiList?.data?.filter((wI:any)=> {
+     return   wI['statuscode@OData.Community.Display.V1.FormattedValue'] !== "✅Published" && wI['gyde_workitemtemplateid'] !== currentWorkItemTemplate?.toLowerCase()
+      })
+      console.log("_filterDraft",_filterDraft);
+      
+      setWorkItemTemplateList(_filterDraft);
+    }
+     
+  }
+
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === 'Shift') {
@@ -450,8 +549,13 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     };
+
+      
   }, []);
 
+  const handleAddToWorkItemTemplatePopup = () => {
+
+  }
   return (
     <div className="custom-container tree-container" id="custom-container" ref={dropdownRef}>
       <Spin spinning={isLoading}>
@@ -472,9 +576,10 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
               
                 <DirectoryTree
                   className="draggable-tree"
-                  // checkable
+                   checkable = {currentTabExpand ? true:false}
+                   checkStrictly={true}
                   // checkedKeys={checkedKeys}
-                  // onCheck={onCheck}
+                  onCheck={onCheck}
                   // defaultExpandedKeys={expandedKeys}
                   expandedKeys={expandedKeys}
                   draggable={!isDisable}
@@ -511,6 +616,7 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
               </div>
               )}
             </div>
+            
           </div>
           
         ) : (
@@ -519,6 +625,21 @@ const  TreeViewComponent = ({imageUrl}: {imageUrl: string}) => {
           </div>
         )}
       </Spin>
+   { currentTabExpand && <div style={{textAlign: "right"}}>
+                <Button type="primary" disabled={workItemTreeList?.length ? false : true} onClick={() => setIsWITempModalOpen(true)}>Add To Work Item Template</Button>
+      </div> }   
+      {
+        isWITempModalOpen ?
+          <AddToWITemp
+            setIsWITempModalOpen={setIsWITempModalOpen}
+            isWITempModalOpen={isWITempModalOpen}
+            workItemTemplateList={workItemTemplateList}
+            workItemTreeList={workItemTreeList}
+            reUseazUrl = { reuseAzureUrl}
+          /> :
+          <>
+          </>
+      }
     </div>
   )
 }

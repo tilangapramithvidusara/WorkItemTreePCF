@@ -24,6 +24,7 @@ export const LogicalNames = {
   BUILDESTIMATEPTS: "gyde_buildestimatepts",
   BUILDESTIMATEHRS: "gyde_buildestimatehrs",
   COPYWORKITEM: "gyde_CopyWorkItem",
+  WORKITEMTEMPLETESEQUENCE: 'gyde_workitemtemplatesequence',
 };
 
 export const Texts = {
