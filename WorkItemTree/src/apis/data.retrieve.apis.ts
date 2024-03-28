@@ -131,15 +131,15 @@ export const loadResourceString = async () : Promise<any> => {
 
     const envResponse = await fetch(`${envUrl}`);
     const envData :any= await envResponse.text();
-    console.log("envData",typeof envData);
+    // console.log("envData",typeof envData);
     const jsonData = JSON.parse(envData);
-    console.log("jsonDataEnv",jsonData);
+    // console.log("jsonDataEnv",jsonData);
     const createReuseSurveyWorkItemsUrl = jsonData["WorkItem/CreateReuseSurveyWorkItems"];
 
     // Log the URL to the console
-    console.log("createReuseSurveyWorkItemsUrl",createReuseSurveyWorkItemsUrl);
-    console.log("envData*", envData);
-    console.log("Filter Keys", filterKeys);
+    // console.log("createReuseSurveyWorkItemsUrl",createReuseSurveyWorkItemsUrl);
+    // console.log("envData*", envData);
+    // console.log("Filter Keys", filterKeys);
     filterKeys?.map((filterKey: string, index: number) => {
       const parser = new DOMParser();
       // Parse the XML string
@@ -148,7 +148,7 @@ export const loadResourceString = async () : Promise<any> => {
       const dataNode: any = xmlDoc.querySelector(`data[name="${filterKey}"]`);
       // Extract the value from the data element
       const value: any = dataNode?.querySelector("value").textContent;
-      console.log('data ====> ', index, value); 
+      // console.log('data ====> ', index, value); 
       if (index && value) {
         languageKeyValueMapper.push({ [filterKey]: value });
       }
